@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-interface IUser extends mongoose.Document {
+interface IUser {
   solvedCtf: mongoose.Types.ObjectId[];
   numberOfSolvedCtf: number;
   email: string;
