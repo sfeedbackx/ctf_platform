@@ -1,10 +1,17 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { IUserCreateBody, IUserCreatedRes } from '../types/userTypes.js';
+import type {
+  IUser,
+  IUserCreateBody,
+  IUserCreatedRes,
+  IUserLoginBody,
+} from '../types/userTypes.js';
 import User from '../models/userModel.js';
-import { hashPassword } from '../utils/hashUtils.js';
+import { checkPassword, hashPassword } from '../utils/hashUtils.js';
 import type { AppError } from '../types/errorTypes.js';
 import { ERROR_NAME } from '../types/errorTypes.js';
 import { HTTP_CODE } from '../types/httpCodes.js';
+import { generateToken } from '../utils/jwtUtils.js';
+import config from '../config/config.js';
 
 export const signUp = async (
   req: Request,
@@ -62,4 +69,68 @@ export const signUp = async (
   } catch (error: unknown) {
     next(error);
   }
+};
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { email, password } = req.body as IUserLoginBody;
+  // Guards
+  if (!email || !password) {
+    const fieldMissingError: AppError = {
+      name: ERROR_NAME.VALIDATION_ERROR.toString(),
+      message: 'Email and  password are required',
+      status: HTTP_CODE.BAD_REQUEST,
+    };
+    return next(fieldMissingError);
+  }
+  const foundUser = await User.findOne({
+    email,
+  });
+  if (!foundUser) {
+    const userNotFoundError: AppError = {
+      name: ERROR_NAME.VALIDATION_ERROR.toString(),
+      message: 'Invalid credentials',
+      status: HTTP_CODE.UNAUTHORIZED,
+    };
+    return next(userNotFoundError);
+  }
+  const isPasswordValid = await checkPassword(password, foundUser.password);
+  if (!isPasswordValid) {
+    const passwordWrongError: AppError = {
+      name: ERROR_NAME.VALIDATION_ERROR.toString(),
+      message: 'Invalid credentials',
+      status: HTTP_CODE.UNAUTHORIZED,
+    };
+    return next(passwordWrongError);
+  }
+  const userToken = generateToken({
+    id: foundUser._id,
+    numberOfSolvedCtf: foundUser.numberOfSolvedCtf,
+    email: foundUser.email,
+  });
+  res.cookie('token', userToken, {
+    httpOnly: true,
+    secure: config.nodeEnv === 'production',
+    sameSite: 'strict' as const, // CSRF protection
+    maxAge: config.maxAge, // 7 days in milliseconds
+  });
+
+  const userWithoutPassword: IUser = {
+    id: foundUser._id,
+    email: foundUser.email,
+    numberOfSolvedCtf: foundUser.numberOfSolvedCtf,
+    solvedCtf: foundUser.solvedCtf,
+  };
+  res.status(HTTP_CODE.SUCCESS).json({
+    userWithoutPassword,
+  });
+};
+export const logout = (_req: Request, res: Response) => {
+  res.clearCookie('token');
+
+  res.status(HTTP_CODE.SUCCESS).json({
+    message: 'Logout successful',
+  });
 };

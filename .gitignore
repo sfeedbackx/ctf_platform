@@ -88,6 +88,7 @@ dist
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 
+
 # vuepress build output
 .vuepress/dist
 
@@ -137,3 +138,5 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+# dumps
+backend/dumps/*.txt
