@@ -11,8 +11,17 @@ import type { AppError } from '../types/errorTypes.js';
 import { ERROR_NAME } from '../types/errorTypes.js';
 import { HTTP_CODE } from '../types/httpCodes.js';
 import { generateToken } from '../utils/jwtUtils.js';
-import config from '../config/config.js';
+import configEnv from '../config/config.js';
 
+/**
+ * Handles user registration by validating input, checking for existing email,
+ * hashing the password, and creating a new user account.
+ *
+ * @param {Request} req - Express request object containing email, password, confirmPassword.
+ * @param {Response} res - Express response object.
+ * @param {NextFunction} next - Express error-handling middleware.
+ * @returns {Promise<void>} Sends user data on success or passes error to middleware.
+ */
 export const signUp = async (
   req: Request,
   res: Response,
@@ -27,7 +36,7 @@ export const signUp = async (
       const fieldMissingError: AppError = {
         name: ERROR_NAME.VALIDATION_ERROR.toString(),
         message: 'Email, password and confirmPassword are required',
-        status: HTTP_CODE.BAD_REQUEST,
+        statusNumber: HTTP_CODE.BAD_REQUEST,
       };
       return next(fieldMissingError);
     }
@@ -37,7 +46,7 @@ export const signUp = async (
       const emailUsedError: AppError = {
         name: ERROR_NAME.VALIDATION_ERROR.toString(),
         message: 'Email already used',
-        status: HTTP_CODE.BAD_REQUEST,
+        statusNumber: HTTP_CODE.BAD_REQUEST,
       };
       return next(emailUsedError);
     }
@@ -46,7 +55,7 @@ export const signUp = async (
       const passwordConfirmationError: AppError = {
         name: ERROR_NAME.VALIDATION_ERROR.toString(),
         message: "passwords don't match",
-        status: HTTP_CODE.BAD_REQUEST,
+        statusNumber: HTTP_CODE.BAD_REQUEST,
       };
       return next(passwordConfirmationError);
     }
@@ -65,11 +74,20 @@ export const signUp = async (
       solvedCtf: newUser.solvedCtf,
     };
 
-    res.status(HTTP_CODE.CREATED).json(userResponse);
+    return res.status(HTTP_CODE.CREATED).json(userResponse);
   } catch (error: unknown) {
     next(error);
   }
 };
+
+/**
+ * Authenticates a user by validating credentials and setting a JWT token cookie.
+ *
+ * @param {Request} req - Express request object containing email and password.
+ * @param {Response} res - Express response object.
+ * @param {NextFunction} next - Express error-handling middleware.
+ * @returns {Promise<void>} Sends user data with token cookie on success or passes error to middleware.
+ */
 export const login = async (
   req: Request,
   res: Response,
@@ -81,7 +99,7 @@ export const login = async (
     const fieldMissingError: AppError = {
       name: ERROR_NAME.VALIDATION_ERROR.toString(),
       message: 'Email and  password are required',
-      status: HTTP_CODE.BAD_REQUEST,
+      statusNumber: HTTP_CODE.BAD_REQUEST,
     };
     return next(fieldMissingError);
   }
@@ -92,7 +110,7 @@ export const login = async (
     const userNotFoundError: AppError = {
       name: ERROR_NAME.VALIDATION_ERROR.toString(),
       message: 'Invalid credentials',
-      status: HTTP_CODE.UNAUTHORIZED,
+      statusNumber: HTTP_CODE.UNAUTHORIZED,
     };
     return next(userNotFoundError);
   }
@@ -101,7 +119,7 @@ export const login = async (
     const passwordWrongError: AppError = {
       name: ERROR_NAME.VALIDATION_ERROR.toString(),
       message: 'Invalid credentials',
-      status: HTTP_CODE.UNAUTHORIZED,
+      statusNumber: HTTP_CODE.UNAUTHORIZED,
     };
     return next(passwordWrongError);
   }
@@ -112,9 +130,9 @@ export const login = async (
   });
   res.cookie('token', userToken, {
     httpOnly: true,
-    secure: config.nodeEnv === 'production',
+    secure: configEnv.nodeEnv === 'production',
     sameSite: 'strict' as const, // CSRF protection
-    maxAge: config.maxAge, // 7 days in milliseconds
+    maxAge: configEnv.maxAge, // 7 days in milliseconds
   });
 
   const userWithoutPassword: IUser = {
@@ -127,6 +145,14 @@ export const login = async (
     userWithoutPassword,
   });
 };
+
+/**
+ * Logs out the user by clearing the authentication token cookie.
+ *
+ * @param {Request} _req - Express request object (unused).
+ * @param {Response} res - Express response object.
+ * @returns {void} Sends success message.
+ */
 export const logout = (_req: Request, res: Response) => {
   res.clearCookie('token');
 

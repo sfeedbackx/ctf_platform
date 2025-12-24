@@ -1,46 +1,46 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-//  Type for creating a new user (request body)
-interface IUserCreateBody {
+// Base user credentials
+interface IUserCredentials {
   email: string;
   password: string;
+}
+
+// Base user info (public fields)
+interface IUserBase {
+  id: mongoose.Types.ObjectId;
+  email: string;
+  numberOfSolvedCtf: number;
+}
+
+// Full user interface with solved CTFs
+export interface IUser extends IUserBase {
+  solvedCtf: mongoose.Types.ObjectId[];
+}
+
+// JWT payload (minimal user info for token)
+export type IJwtUser = IUserBase;
+
+// User registration request body
+export interface IUserCreateBody extends IUserCredentials {
   confirmPassword: string;
   solvedCtf?: mongoose.Types.ObjectId[];
 }
 
-// Type for updating a user (request body)
-interface IUserUpdateBody {
+// User login request body
+export type IUserLoginBody = IUserCredentials;
+
+// User update request body (all fields optional)
+export interface IUserUpdateBody {
   email?: string;
   password?: string;
   solvedCtf?: mongoose.Types.ObjectId[];
 }
-
-// Type for login (request body)
-interface IUserLoginBody {
-  email: string;
-  password: string;
-}
-
-type IUserCreatedRes = IUser;
-
-interface IJwtUser {
-  id: mongoose.Types.ObjectId;
-  email: string;
-  numberOfSolvedCtf: number;
-}
-
-interface IUser {
-  id: mongoose.Types.ObjectId;
-  email: string;
-  numberOfSolvedCtf: number;
+// doc type
+export interface IUserModel extends Document, IUserCredentials {
   solvedCtf: mongoose.Types.ObjectId[];
+  numberOfSolvedCtf: number;
 }
 
-export type {
-  IUserCreateBody,
-  IUserUpdateBody,
-  IUserLoginBody,
-  IUserCreatedRes,
-  IUser,
-  IJwtUser,
-};
+// User creation response
+export type IUserCreatedRes = IUser;

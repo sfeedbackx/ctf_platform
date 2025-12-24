@@ -7,6 +7,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx' src/server.ts",
+    "docker_test": "tsx src/utils/dockerUtils.ts",
+    "migrate": "tsx scripts/migrateScript.ts",
     "lint": "eslint 'src/**/*.ts'",
     "format": "prettier --write \"src/**/*.{js,ts,json}\"",
     "check": "prettier --check \"src/**/*.{js,ts,json}\""
@@ -21,17 +23,21 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
+    "dockerode": "^4.0.9",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.0.2"
+    "mongoose": "^9.0.2",
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/cookie-parser": "^1.4.10",
+    "@types/dockerode": "^3.3.47",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.0.3",
+    "@types/node-cron": "^3.0.11",
     "eslint": "^9.39.2",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
