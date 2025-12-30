@@ -9,8 +9,17 @@ export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ) => {
-  console.error(err);
-  res.status(err.status || HTTP_CODE.INTERNAL_ERROR_CODE).json({
-    message: err.message || 'Internal Server Error',
-  });
+  if (
+    err.statusNumber === HTTP_CODE.INTERNAL_SERVER_ERROR ||
+    err.statusNumber === 500
+  ) {
+    console.error('[ERROR]', err);
+    res.status(HTTP_CODE.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal Server',
+    });
+  } else {
+    res.status(err.statusNumber || HTTP_CODE.INTERNAL_SERVER_ERROR).json({
+      message: err.message || 'Internal Server Error',
+    });
+  }
 };

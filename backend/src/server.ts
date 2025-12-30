@@ -1,8 +1,10 @@
 import app from './app.js';
-import config from './config/config.js';
+import configEnv from './config/config.js';
 import connectToDb from './config/db.js';
+import { scheduleCleanup } from './utils/cronUtils.js';
 
-app.listen(config.port, async () => {
+app.listen(configEnv.port, async () => {
   await connectToDb();
-  console.log(`Server running on port ${config.port}`);
+  console.log(`[INFO] Server running on port ${configEnv.port}`);
+  scheduleCleanup();
 });

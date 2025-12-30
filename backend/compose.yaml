@@ -1,4 +1,5 @@
 name: ctf_platform
+
 services:
   mongo:
     image: mongo:8.0
@@ -12,6 +13,64 @@ services:
     volumes:
       - mongo-data:/data/db
       - mongo-config:/data/configdb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ctf-network
+
+  docker-socket-proxy:
+      container_name: dockerproxy
+      # Uncomment the following ports section for development
+      # ports:
+      #   - "2375:2375"
+      environment:
+      - CONTAINERS=1      # create/start/stop/inspect containers
+      - POST=1            # CRITICAL: allow POST requests
+      - IMAGES=1          # read image info (needed for Image parameter)
+      - NETWORKS=1        # needed for NetworkMode in HostConfig
+      - INFO=0            # not needed
+      - EXEC=0            # not needed 
+      - VOLUMES=0         # not needed
+      - SYSTEM=0          # not needed
+      - BUILD=0           # not needed
+      - COMMIT=0          # not needed
+      - CONFIGS=0         # not needed
+      - DISTRIBUTION=0    # not needed
+      - SECRETS=0         # not needed
+      - SERVICES=0        # not needed
+      - SWARM=0           # not needed
+      - TASKS=0           # not needed
+      volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      image: tecnativa/docker-socket-proxy
+      networks:
+      - ctf-network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: ctf-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env
+    networks:
+      - ctf-network
+    depends_on:
+      docker-socket-proxy:
+        condition: service_started
+      mongo:
+        condition: service_healthy
+
+
+networks:
+  ctf-network:
+    driver: bridge
 
 volumes:
   mongo-data:
