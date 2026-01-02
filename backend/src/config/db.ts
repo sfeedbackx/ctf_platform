@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
-import config from './config.js';
+import configEnv from './config.js';
 
 const connectToDb = async () => {
   try {
-    await mongoose.connect(config.dbUrl);
-    console.log('Connected to DB');
+    await mongoose.connect(configEnv.dbUrl);
+    console.log('[INFO] Connected to DB');
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.log('error while connecting to db', error.message); // Safe to access message property
+      console.error('[ERROR] Error while connecting to db:', error.message);
     } else {
-      console.log('error while connecting to db', error);
+      console.error('[ERROR] Error while connecting to db:', error);
     }
   }
 };

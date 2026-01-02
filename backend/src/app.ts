@@ -1,16 +1,17 @@
 import express from 'express';
-import cors from 'cors';  // ADD THIS
-import authRoute from './router/authenticationRoute.js';
+import cors from 'cors';  // YOUR CORS ✅
+import authRoute from './router/authenticationRoute.js';  // YOUR auth
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { requestLogger } from './middlewares/requestLogger.js';
+import mainRoute from './router/mainRoute.js';  // FRIEND'S routes
 
 const app = express();
 
-// CORS - ADD THIS BLOCK (before routes)
+// CORS - YOUR FIX (before all routes)
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],  // Frontend Vite ports
-  credentials: true,  // For cookies/JWT
+  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
@@ -18,14 +19,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
 
-// Routes
 app.get('/', (_req, res) => {
   res.send('hello world');
 });
 
-app.use('/api', authRoute);  // Your auth routes at /api/login
+// BOTH ROUTES - /api/auth + /api/v1/*
+app.use('/api/auth', authRoute);  // Login/signup
+app.use('/api/v1', mainRoute);    // Friend's CTF routes
 
-// Global error handler
 app.use(errorHandler);
 
 export default app;

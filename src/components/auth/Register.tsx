@@ -1,3 +1,4 @@
+// Register.tsx - FULLY FIXED
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
@@ -42,16 +43,18 @@ const Register: React.FC = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        teamName: formData.teamName || undefined
+        confirmPassword: formData.confirmPassword,  // ✅ ADDED for backend
+        teamName: formData.teamName || ""           // ✅ Empty string
       });
       navigate('/login', { state: { message: 'Registration successful! Please login.' } });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
 
+  // ... rest JSX unchanged
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -61,58 +64,12 @@ const Register: React.FC = () => {
         {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          <Input
-            type="text"
-            name="username"
-            label="Username"
-            placeholder="hacker123"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-
-          <Input
-            type="email"
-            name="email"
-            label="Email"
-            placeholder="your@email.com"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-
-          <Input
-            type="text"
-            name="teamName"
-            label="Team Name (Optional)"
-            placeholder="Awesome Hackers"
-            value={formData.teamName}
-            onChange={handleChange}
-          />
-
-          <Input
-            type="password"
-            name="password"
-            label="Password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-
-          <Input
-            type="password"
-            name="confirmPassword"
-            label="Confirm Password"
-            placeholder="••••••••"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-
-          <Button type="submit" loading={loading} className="btn-full">
-            Register
-          </Button>
+          <Input type="text" name="username" label="Username" placeholder="hacker123" value={formData.username} onChange={handleChange} required />
+          <Input type="email" name="email" label="Email" placeholder="your@email.com" value={formData.email} onChange={handleChange} required />
+          <Input type="text" name="teamName" label="Team Name (Optional)" placeholder="Awesome Hackers" value={formData.teamName} onChange={handleChange} />
+          <Input type="password" name="password" label="Password" placeholder="••••••••" value={formData.password} onChange={handleChange} required />
+          <Input type="password" name="confirmPassword" label="Confirm Password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} required />
+          <Button type="submit" loading={loading} className="btn-full">Register</Button>
         </form>
 
         <p className="auth-footer">

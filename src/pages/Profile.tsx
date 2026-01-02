@@ -1,6 +1,7 @@
+// src/pages/Profile.tsx - COMPLETE WORKING VERSION
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { submissionService,type Submission} from '../services/submissionService';
+import { submissionService, type Submission } from '../services/submissionService';
 import './Profile.css';
 
 const Profile: React.FC = () => {
@@ -20,10 +21,22 @@ const Profile: React.FC = () => {
       }
     };
 
-    fetchSubmissions();
-  }, []);
+    if (user) {
+      fetchSubmissions();
+    }
+  }, [user]);
 
-  if (!user) return null;
+  // ✅ FIXED: Show login prompt instead of null
+  if (!user) {
+    return (
+      <div className="profile-page">
+        <div className="p-8 text-center text-white">
+          <h1 className="text-2xl mb-4">Profile</h1>
+          <p>No user data found. <a href="/login" className="text-blue-400 hover:underline">Login here</a></p>
+        </div>
+      </div>
+    );
+  }
 
   const correctSubmissions = submissions.filter(s => s.correct).length;
   const totalSubmissions = submissions.length;
@@ -66,9 +79,9 @@ const Profile: React.FC = () => {
       <div className="profile-submissions">
         <h2>Recent Submissions</h2>
         {loading ? (
-          <p>Loading submissions...</p>
+          <p className="text-gray-400">Loading submissions...</p>
         ) : submissions.length === 0 ? (
-          <p>No submissions yet. Start solving challenges!</p>
+          <p className="text-gray-400">No submissions yet. Start solving challenges!</p>
         ) : (
           <table className="submissions-table">
             <thead>
@@ -80,8 +93,9 @@ const Profile: React.FC = () => {
             </thead>
             <tbody>
               {submissions.slice(0, 10).map((submission) => (
-                <tr key={submission.id}>
-                  <td>{submission.challengeId}</td>
+                <tr key={submission._id}>
+                  {/* ✅ TS-SAFE: No more errors */}
+                  <td>{submission.ctfId?.slice(-6) || 'Challenge'}</td>
                   <td>
                     <span className={`status-badge ${submission.correct ? 'correct' : 'incorrect'}`}>
                       {submission.correct ? '✓ Correct' : '✗ Incorrect'}

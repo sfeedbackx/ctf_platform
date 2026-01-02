@@ -1,16 +1,28 @@
-import type { IJwtUser } from '../types/userTypes.js';
 import jwt from 'jsonwebtoken';
-import config from '../config/config.js';
+import configEnv from '../config/config.js';
 import { Error } from 'mongoose';
 import type { JWTPayload, TokenValidationResult } from '../types/jwtTypes.js';
+import type { IJwtUser } from '../types/userTypes.js';
 
+/**
+ * Generates a JWT token for the given user data.
+ *
+ * @param {IJwtUser} jwtUser - User data to encode in the token.
+ * @returns {string} JWT token string.
+ */
 export const generateToken = (jwtUser: IJwtUser) => {
-  return jwt.sign(jwtUser, config.secret, { expiresIn: config.maxAge });
+  return jwt.sign(jwtUser, configEnv.secret, { expiresIn: configEnv.maxAge });
 };
 
+/**
+ * Validates a JWT token and extracts its payload.
+ *
+ * @param {string} token - JWT token string to validate.
+ * @returns {TokenValidationResult} Validation result with payload if valid, or error if invalid.
+ */
 export const tokenValidation = (token: string): TokenValidationResult => {
   try {
-    const decoded = jwt.verify(token, config.secret) as JWTPayload;
+    const decoded = jwt.verify(token, configEnv.secret) as JWTPayload;
     return {
       valid: true,
       payload: decoded,

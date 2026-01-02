@@ -21,7 +21,11 @@ const Login: React.FC = () => {
     setError(null);
     setLoading(true);
     try {
-      await login(email, password);
+
+// ✅ CORRECT:
+const credentials = { email, password };
+await login(credentials);
+
       navigate('/');
     } catch (err: any) {
       setError(err.message || 'Failed to login');
