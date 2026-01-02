@@ -1,12 +1,12 @@
 import api from './api';
 
 export interface Submission {
-  id: string;
-  challengeId: string;
+  _id: string;
+  ctfId: string; // Pas challengeId
   userId: string;
   flag: string;
   correct: boolean;
-  submittedAt: Date;
+  submittedAt: string;
 }
 
 export interface LeaderboardEntry {
@@ -19,17 +19,17 @@ export interface LeaderboardEntry {
 
 export const submissionService = {
   async submitFlag(challengeId: string, flag: string) {
-    const response = await api.post('/submissions', { challengeId, flag });
+    const response = await api.patch(`/ctfs/${challengeId}`, { flag });
     return response.data;
   },
 
   async getMySubmissions(): Promise<Submission[]> {
     const response = await api.get('/submissions/me');
-    return response.data.data;
+    return response.data.data || [];
   },
 
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
     const response = await api.get('/leaderboard');
-    return response.data.data;
+    return response.data.data || [];
   }
 };

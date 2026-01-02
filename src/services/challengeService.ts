@@ -1,16 +1,31 @@
 import api from './api';
 
 export interface Challenge {
-  id: string;
+  _id: string; // MongoDB utilise _id
+  type: 'WEB_EXPLOIT' | 'BINARY_EXPLOIT' | 'CRYPTO' | 'FORENSICS' | 'REVERSE';
   title: string;
   description: string;
   category: string;
   points: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'EASY' | 'MID' | 'HARD';
   solves: number;
   solved?: boolean;
   hints?: string[];
   files?: string[];
+  withShell: boolean;
+  resources: string[];
+  containers: Container[];
+  flag: string; // Jamais envoyé au frontend !
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Container {
+  serviceName: string;
+  image: string;
+  internalPort: number;
+  exposed: boolean;
+  env: Record<string, string>;
 }
 
 export const challengeService = {
@@ -19,27 +34,35 @@ export const challengeService = {
     if (category) params.append('category', category);
     if (difficulty) params.append('difficulty', difficulty);
     
-    const response = await api.get(`/challenges?${params.toString()}`);
-    return response.data.data;
+    // ❌ ANCIEN: GET /challenges
+    // ✅ NOUVEAU: GET /api/v1/ctfs
+    const response = await api.get(`/ctfs?${params.toString()}`);
+    return response.data.data || response.data;
   },
 
   async getChallengeById(id: string): Promise<Challenge> {
-    const response = await api.get(`/challenges/${id}`);
-    return response.data.data;
+    // ❌ ANCIEN: GET /challenges/:id
+    // ✅ NOUVEAU: GET /api/v1/ctfs/:id
+    const response = await api.get(`/ctfs/${id}`);
+    return response.data.data || response.data;
   },
 
   async createChallenge(data: Partial<Challenge>) {
-    const response = await api.post('/challenges', data);
+    // Admin only
+    // ✅ POST /api/v1/ctfs
+    const response = await api.post('/ctfs', data);
     return response.data;
   },
 
   async updateChallenge(id: string, data: Partial<Challenge>) {
-    const response = await api.put(`/challenges/${id}`, data);
+    // Admin only
+    const response = await api.patch(`/ctfs/${id}`, data);
     return response.data;
   },
 
   async deleteChallenge(id: string) {
-    const response = await api.delete(`/challenges/${id}`);
+    // Admin only
+    const response = await api.delete(`/ctfs/${id}`);
     return response.data;
   }
 };
