@@ -1,3 +1,4 @@
+// src/services/authService.ts
 import api from './api';
 
 export interface LoginCredentials {
@@ -5,7 +6,7 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface RegisterData {
+export interface RegisterData {  // ✅ ADD THIS
   username: string;
   email: string;
   password: string;
@@ -13,68 +14,37 @@ export interface RegisterData {
 }
 
 export interface User {
-  _id: string; // MongoDB utilise _id
+  _id: string;
   username: string;
   email: string;
   role: string;
   score: number;
   teamName?: string;
-  solvedCtf: string[]; // Array d'IDs de challenges résolus
-  nbSolvedCtf: number; // Nombre de challenges résolus
+  solvedCtf: string[];
+  nbSolvedCtf: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export const authService = {
   async login(credentials: LoginCredentials) {
-    // ✅ CHANGÉ: /auth/login → /login
-    const response = await api.post('/login', credentials);
-    
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-    }
-    
-    // Le backend retourne: { token: string, user: User }
-    return {
-      token: response.data.token,
-      user: response.data.user
-    };
+    const { data } = await api.post('/login', credentials);
+    return data;
   },
 
   async register(data: RegisterData) {
-    // ✅ CHANGÉ: /auth/register → /signup
-    const response = await api.post('/signup', data);
-    return response.data;
+    const { data: response } = await api.post('/signup', data);
+    return response;
   },
 
   async getProfile(): Promise<User> {
-    // Option 1: Appeler un endpoint /me (si tu le crées dans le backend)
-    // const response = await api.get('/me');
-    // return response.data.data;
-    
-    // Option 2: Décoder le JWT côté client (pour éviter un appel API)
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No token found');
-    }
-    
-    try {
-      // Décoder le payload du JWT (partie centrale)
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      
-      // Le JWT contient: { userId, email, role, iat, exp }
-      const response = await api.get('/me'); // Créer cet endpoint backend
-      return response.data.data;
-    } catch (error) {
-      localStorage.removeItem('token');
-      throw new Error('Invalid token');
-    }
+    const { data } = await api.get('/me');
+    return data.data;
   },
 
-  logout() {
-    api.post('/logout').finally(() => {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    });
+  async logout() {
+    await api.post('/logout');
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   }
 };
