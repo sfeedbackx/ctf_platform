@@ -1,55 +1,34 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+// src/context/AuthContext.tsx
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
+import axios from 'axios';
+import {
+  authService,
+  type User,
+  type LoginCredentials,
+  type RegisterData,
+} from '../services/authService';
 
-// ✅ TEMPORARY MOCK - replace with real authService later
-const mockAuthService = {
-  isAuthenticated: () => !!localStorage.getItem('token'),
-  getCurrentUser: (): any => {
-    try {
-      return localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
-    } catch {
-      return null;
-    }
-  },
-  login: async () => ({}),
-  saveUser: (user: any) => localStorage.setItem('user', JSON.stringify(user)),
-  logout: async () => localStorage.removeItem('token'),
-};
-
-// ✅ EXPORT TYPE
-export interface User {
-  _id: string;
-  username: string;
-  email: string;
-  score: number;
-  teamName?: string;
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-}
-export{AuthContext};
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context as AuthContextType;
+  return context;
 };
 
 interface AuthProviderProps {
@@ -58,62 +37,71 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initAuth = () => {
-      const tokenExists = mockAuthService.isAuthenticated();
-      const savedUser = mockAuthService.getCurrentUser();
-      
-      setIsAuthenticated(tokenExists);
-      if (savedUser) setUser(savedUser);
-      setLoading(false);
-    };
-    initAuth();
+    const token = localStorage.getItem('token');
+    const raw = localStorage.getItem('user');
+
+    if (token && raw) {
+      try {
+        const u = JSON.parse(raw);
+
+        // ✅ normalize user to always have username
+        const normalizedUser: User = {
+          _id: u._id,
+          username: u.username || u.name || (u.email?.split('@')[0] ?? 'User'),
+          email: u.email || 'noemail@example.com',
+          role: u.role || 'user',
+          score: u.score ?? 0,
+          teamName: u.teamName,
+          solvedCtf: u.solvedCtf ?? [],
+          nbSolvedCtf: u.nbSolvedCtf ?? 0,
+          createdAt: u.createdAt ?? new Date().toISOString(),
+          updatedAt: u.updatedAt ?? new Date().toISOString(),
+        };
+
+        setUser(normalizedUser);
+        setIsAuthenticated(true);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch {
+        // corrupted localStorage
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
+    }
+
+    setLoading(false);
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
-    try {
-      // Mock login - replace with real later
-      const mockUser: User = {
-        _id: '1',
-        username: credentials.email.split('@')[0],
-        email: credentials.email,
-        score: 0
-      };
-      
-      mockAuthService.saveUser(mockUser);
-      setUser(mockUser);
-      setIsAuthenticated(true);
-    } catch (error) {
-      throw new Error('Login failed');
-    }
+    const { user } = await authService.login(credentials);
+    setUser(user);
+    setIsAuthenticated(true);
   };
 
   const register = async (data: RegisterData) => {
-    // Mock register
-    console.log('Registered:', data);
+    await authService.register(data);
   };
 
   const logout = async () => {
-    mockAuthService.logout();
-    mockAuthService.saveUser(null);
+    await authService.logout();
     setUser(null);
     setIsAuthenticated(false);
   };
 
-  const value: AuthContextType = {
-    user,
-    isAuthenticated,
-    loading,
-    login,
-    register,
-    logout,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,11 +1,11 @@
-// src/pages/Profile.tsx - COMPLETE WORKING VERSION
+// src/pages/Profile.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { submissionService, type Submission } from '../services/submissionService';
 import './Profile.css';
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,8 +14,11 @@ const Profile: React.FC = () => {
       try {
         const data = await submissionService.getMySubmissions();
         setSubmissions(data);
-      } catch (error) {
-        console.error('Failed to fetch submissions:', error);
+      } catch (error: any) {
+        // Ignore 401 to avoid forcing logout
+        if (error.response?.status !== 401) {
+          console.error('Failed to fetch submissions:', error);
+        }
       } finally {
         setLoading(false);
       }
@@ -23,43 +26,62 @@ const Profile: React.FC = () => {
 
     if (user) {
       fetchSubmissions();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
-  // ✅ FIXED: Show login prompt instead of null
+  // ✅ Show auth loading
+  if (authLoading) {
+    return (
+      <div className="profile-page">
+        <p className="text-gray-400">Loading profile...</p>
+      </div>
+    );
+  }
+
+  // ✅ Show login prompt if no user
   if (!user) {
     return (
       <div className="profile-page">
         <div className="p-8 text-center text-white">
           <h1 className="text-2xl mb-4">Profile</h1>
-          <p>No user data found. <a href="/login" className="text-blue-400 hover:underline">Login here</a></p>
+          <p>
+            No user data found.{' '}
+            <a href="/login" className="text-blue-400 hover:underline">
+              Login here
+            </a>
+          </p>
         </div>
       </div>
     );
   }
 
+  // ✅ Safe values
+  const username = user.username ?? 'User';
+  const avatarLetter = username.charAt(0).toUpperCase();
+  const email = user.email ?? 'N/A';
+  const score = user.score ?? 0;
   const correctSubmissions = submissions.filter(s => s.correct).length;
   const totalSubmissions = submissions.length;
-  const successRate = totalSubmissions > 0 
-    ? Math.round((correctSubmissions / totalSubmissions) * 100) 
+  const successRate = totalSubmissions > 0
+    ? Math.round((correctSubmissions / totalSubmissions) * 100)
     : 0;
 
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <div className="profile-avatar">
-          {user.username.charAt(0).toUpperCase()}
-        </div>
+        <div className="profile-avatar">{avatarLetter}</div>
         <div className="profile-info">
-          <h1>{user.username}</h1>
-          <p>{user.email}</p>
+          <h1>{username}</h1>
+          <p>{email}</p>
           {user.teamName && <p className="team-name">Team: {user.teamName}</p>}
         </div>
       </div>
 
       <div className="profile-stats">
         <div className="stat-box">
-          <div className="stat-value">⭐ {user.score}</div>
+          <div className="stat-value">⭐ {score}</div>
           <div className="stat-label">Total Score</div>
         </div>
         <div className="stat-box">
@@ -94,10 +116,13 @@ const Profile: React.FC = () => {
             <tbody>
               {submissions.slice(0, 10).map((submission) => (
                 <tr key={submission._id}>
-                  {/* ✅ TS-SAFE: No more errors */}
                   <td>{submission.ctfId?.slice(-6) || 'Challenge'}</td>
                   <td>
-                    <span className={`status-badge ${submission.correct ? 'correct' : 'incorrect'}`}>
+                    <span
+                      className={`status-badge ${
+                        submission.correct ? 'correct' : 'incorrect'
+                      }`}
+                    >
                       {submission.correct ? '✓ Correct' : '✗ Incorrect'}
                     </span>
                   </td>

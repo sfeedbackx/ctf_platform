@@ -1,4 +1,4 @@
-// src/services/authService.ts - FULLY FIXED
+// src/services/authService.ts
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 
@@ -28,63 +28,95 @@ export interface User {
   updatedAt: string;
 }
 
-const AUTH_BASE_URL = 'http://localhost:3000/api/auth';  // Backend exact
+const AUTH_BASE_URL = 'http://localhost:3000/api/auth';
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<{ token: string; user?: User }> {
-    const response: AxiosResponse = await axios.post(`${AUTH_BASE_URL}/login`, credentials);
-    const { token } = response.data;
-    
-    if (token) {
+  // ✅ LOGIN
+  async login(
+    credentials: LoginCredentials
+  ): Promise<{ token: string; user: User }> {
+    try {
+      const response: AxiosResponse<{ token: string; userWithoutPassword: any }> =
+        await axios.post(`${AUTH_BASE_URL}/login`, credentials);
+
+      const { token, userWithoutPassword } = response.data;
+
+      // ✅ Normalize user fields
+      const user: User = {
+        _id: userWithoutPassword._id,
+        username: userWithoutPassword.username || userWithoutPassword.name ||  userWithoutPassword.email.split('@')[0] ,
+        email: userWithoutPassword.email || 'noemail@example.com',
+        role: userWithoutPassword.role || 'user',
+        score: userWithoutPassword.score ?? 0,
+        teamName: userWithoutPassword.teamName,
+        solvedCtf: userWithoutPassword.solvedCtf ?? [],
+        nbSolvedCtf: userWithoutPassword.nbSolvedCtf ?? 0,
+        createdAt: userWithoutPassword.createdAt ?? new Date().toISOString(),
+        updatedAt: userWithoutPassword.updatedAt ?? new Date().toISOString(),
+      };
+
+      // ✅ Persist auth
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      return { token, user };
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        throw new Error('Invalid credentials');
+      }
+      console.error('Login error:', error);
+      throw new Error('Login failed');
     }
-    
-    return response.data;
   },
 
+  // ✅ REGISTER
   async register(data: RegisterData): Promise<any> {
     const response: AxiosResponse = await axios.post(`${AUTH_BASE_URL}/signup`, data);
     return response.data;
   },
 
-  // ✅ Fixed: Simple token check (no /me API call)
+  // ✅ CHECK AUTH
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
   },
 
+  // ✅ LOGOUT
   async logout(): Promise<void> {
     try {
-      await axios.post(`${AUTH_BASE_URL}/logout`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      await axios.post(
+        `${AUTH_BASE_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      });
-    } catch (error) {
-      // Logout endpoint optional - ignore errors
-      console.log('Logout endpoint not available');
+      );
+    } catch {
+      // backend logout optional
     } finally {
       localStorage.removeItem('token');
-      // Clear axios token if using shared api
-      delete (axios.defaults.headers.common as any)['Authorization'];
+      localStorage.removeItem('user');
+      delete axios.defaults.headers.common['Authorization'];
     }
   },
 
-  // ✅ Get user from localStorage (no API call)
+  // ✅ GET CURRENT USER FROM LOCAL STORAGE
   getCurrentUser(): User | null {
-    try {
-      const userData = localStorage.getItem('user');
-      return userData ? JSON.parse(userData) : null;
-    } catch {
-      return null;
-    }
+    const user = localStorage.getItem('user');
+    return user ? (JSON.parse(user) as User) : null;
   },
 
-  // ✅ Save user data after login
+  // ✅ SAVE USER (update local storage)
   saveUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
   },
 
+  // ✅ CLEAR USER (logout)
   clearUser(): void {
     localStorage.removeItem('user');
-  }
+  },
 };
+
+export default authService;
