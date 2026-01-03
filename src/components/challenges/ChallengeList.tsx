@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { challengeService } from '../../services/challengeService';
-import type { Challenge } from '../../services/challengeService';
+import type { Ctf, CtfDifficulty, CtfType } from '../../types/ctf';
 import ChallengeCard from './ChallengeCard';
 import './ChallengeList.css';
 
 const ChallengeList: React.FC = () => {
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [challenges, setChallenges] = useState<Ctf[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('');
   const [difficulty, setDifficulty] = useState('');
@@ -15,7 +15,20 @@ const ChallengeList: React.FC = () => {
       try {
         setLoading(true);
         const data = await challengeService.getAllChallenges(category, difficulty);
-        setChallenges(data);
+
+        // Map API data to Ctf type
+        const mappedData: Ctf[] = data.map((challenge: any, index: number) => ({
+          id: challenge.id || `challenge-${index}`,
+          name: challenge.name || challenge.title || `Challenge ${index}`,
+          type: challenge.type as CtfType || 'OTHER',
+          description: challenge.description || '',
+          difficulty: challenge.difficulty as CtfDifficulty || 'MID',
+          hints: challenge.hints || [],
+          resources: challenge.resources || [],
+          withSite: challenge.withSite ?? false,
+        }));
+
+        setChallenges(mappedData);
       } catch (error) {
         console.error('Failed to fetch challenges:', error);
       } finally {
@@ -32,24 +45,24 @@ const ChallengeList: React.FC = () => {
 
   return (
     <div className="challenge-list">
+      {/* Filters */}
       <div className="challenge-filters">
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="">All Categories</option>
-          <option value="web">Web</option>
-          <option value="crypto">Crypto</option>
-          <option value="reverse">Reverse</option>
-          <option value="forensics">Forensics</option>
-          <option value="pwn">Pwn</option>
+          <option value="WEB_EXPLOIT">Web</option>
+          <option value="BE">Backend</option>
+          <option value="OTHER">Other</option>
         </select>
 
         <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
           <option value="">All Difficulties</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="EASY">Easy</option>
+          <option value="MID">Medium</option>
+          <option value="HARD">Hard</option>
         </select>
       </div>
 
+      {/* Challenges Grid */}
       <div className="challenge-grid">
         {challenges.length === 0 ? (
           <p className="no-challenges">No challenges found</p>

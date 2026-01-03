@@ -1,28 +1,379 @@
 .challenges-page {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #0a0a0a;
+  min-height: 100vh;
 }
 
-.challenges-content {
-  min-width: 0;
-}
-
-.challenges-content h1 {
-  color: var(--primary);
-  font-size: 2.5rem;
+.page-header {
   margin-bottom: 2rem;
-  text-shadow: 0 0 20px var(--primary-glow);
 }
 
-@media (max-width: 1024px) {
-  .challenges-page {
-    grid-template-columns: 1fr;
-  }
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-header p {
+  color: #9ca3af;
+  font-size: 1.1rem;
+}
+
+/* Filters */
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+  border-radius: 12px;
+  border: 1px solid #2d2d44;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.filter-group select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #3d3d5c;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-group select:hover {
+  border-color: #667eea;
+  background: #252538;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Stats Cards */
+.stats-container {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
-  .challenges-content h1 {
-    font-size: 2rem;
+  .stats-container {
+    flex-direction: column;
   }
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #0a195c 0%, #764ba2 100%);
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex: 1;
+  min-width: 200px;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+}
+
+.stat-card:nth-child(2) {
+  background: linear-gradient(135deg, #241263 0%, #f5576c 100%);
+  box-shadow: 0 8px 16px rgba(245, 87, 108, 0.3);
+}
+
+.stat-card:nth-child(2):hover {
+  box-shadow: 0 12px 24px rgba(245, 87, 108, 0.4);
+}
+
+.stat-card:nth-child(3) {
+  background: linear-gradient(135deg, #0a243b 0%, #00f2fe 100%);
+  box-shadow: 0 8px 16px rgba(18, 74, 123, 0.3);
+}
+
+.stat-card:nth-child(3):hover {
+  box-shadow: 0 12px 24px rgba(79, 172, 254, 0.4);
+}
+
+.stat-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Challenges Grid */
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* Loading, Error, No Challenges */
+.loading-container,
+.error-container,
+.no-challenges {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #e5e7eb;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #2a2a3e;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-card {
+  background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+  padding: 3rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #3d3d5c;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.loading-card p {
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.error-container {
+  background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid #f5576c;
+  max-width: 500px;
+  margin: 4rem auto;
+}
+
+.error-container h2 {
+  color: #e90e2b;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: #e5e7eb;
+}
+
+.error-container button {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.error-container button:hover {
+  transform: translateY(-2px);
+}
+
+.no-challenges {
+  background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid #2d2d44;
+}
+
+.no-challenges p {
+  font-size: 1.1rem;
+  color: #9ca3af;
+}
+.challenge-description {
+  color: #cbd5e1; /* lighter text for readability */
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  min-height: 60px;
+  position: relative;
+  z-index: 1;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid rgba(102, 126, 234, 0.4);
+  background: rgba(255, 255, 255, 0.03); /* subtle highlight */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Hover effect */
+.challenge-description:hover {
+  background: rgba(102, 126, 234, 0.05);
+  border-left-color: #667eea;
+}
+
+/* Optional: make links inside description stand out */
+.challenge-description a {
+  color: #667eea;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.challenge-description a:hover {
+  color: #764ba2;
+}
+
+/* Optional: add small code blocks or inline code highlighting */
+.challenge-description code {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.95rem;
+  color: #ffdd57;
+}
+
+/* Optional: small “tag” style for difficulty or category badges inside description */
+.challenge-description .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-right: 6px;
+  background: rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+/* Footer container */
+.challenge-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+/* Category badge (like a button) */
+.challenge-category {
+  background-color: #4a90e2; /* blue for web/other */
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  cursor: default;
+}
+
+/* Hover effect for category badge */
+.challenge-category:hover {
+  background-color: #357ab7; /* darker blue */
+  transform: translateY(-2px);
+}
+
+/* Difficulty badge (like a button) */
+.challenge-difficulty {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: default;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Difficulty colors */
+.difficulty-easy {
+  background-color: #28a745; /* green */
+}
+
+.difficulty-easy:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.difficulty-mid {
+  background-color: #ff9800; /* orange/yellow */
+  color: #fff;
+}
+
+.difficulty-mid:hover {
+  background-color: #e67e22; /* darker orange */
+  transform: translateY(-2px);
+}
+
+.difficulty-hard {
+  background-color: #dc3545; /* red */
+}
+
+.difficulty-hard:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
 }

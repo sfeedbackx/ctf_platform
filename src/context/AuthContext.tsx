@@ -21,6 +21,7 @@ export interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => void; // ✅ added
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,6 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Initialize auth state
   useEffect(() => {
     const token = localStorage.getItem('token');
     const raw = localStorage.getItem('user');
@@ -48,7 +50,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const u = JSON.parse(raw);
 
-        // ✅ normalize user to always have username
         const normalizedUser: User = {
           _id: u._id,
           username: u.username || u.name || (u.email?.split('@')[0] ?? 'User'),
@@ -66,7 +67,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } catch {
-        // corrupted localStorage
         localStorage.removeItem('user');
         localStorage.removeItem('token');
       }
@@ -75,20 +75,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // Login
   const login = async (credentials: LoginCredentials) => {
     const { user } = await authService.login(credentials);
     setUser(user);
     setIsAuthenticated(true);
   };
 
+  // Register
   const register = async (data: RegisterData) => {
     await authService.register(data);
   };
 
+  // Logout
   const logout = async () => {
     await authService.logout();
     setUser(null);
     setIsAuthenticated(false);
+  };
+
+  // ✅ Refresh user from localStorage
+  const refreshUser = () => {
+    const savedUser = authService.getCurrentUser();
+    if (savedUser) {
+      setUser(savedUser);
+      setIsAuthenticated(true);
+    } else {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
   };
 
   return (
@@ -100,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         register,
         logout,
+        refreshUser, // ✅ added here
       }}
     >
       {children}
