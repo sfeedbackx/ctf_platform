@@ -38,22 +38,18 @@ const Home: React.FC = () => {
       <section className="features">
         <div className="feature-grid">
           <div className="feature-card">
-            <div className="feature-icon">🌐</div>
             <h3>Web Exploitation</h3>
             <p>SQL injection, XSS, CSRF and more</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🔐</div>
             <h3>Cryptography</h3>
             <p>Crack codes and break encryption</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🔄</div>
             <h3>Reverse Engineering</h3>
             <p>Analyze binaries and find vulnerabilities</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🔍</div>
             <h3>Forensics</h3>
             <p>Investigate and find hidden data</p>
           </div>

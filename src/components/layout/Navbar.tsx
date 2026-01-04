@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
                 <li><Link to="/admin">Admin</Link></li>
               )}
               <li>
-                <span className="user-score">⭐ {user?.score} pts</span>
+                <span className="user-score"> {user?.score} pts</span>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout">

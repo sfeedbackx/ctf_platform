@@ -60,7 +60,7 @@ const Leaderboard: React.FC = () => {
                 <td className="username-cell">{entry.username}</td>
                 <td>{entry.teamName || '-'}</td>
                 <td>{entry.solvedCount}</td>
-                <td className="score-cell">⭐ {entry.score}</td>
+                <td className="score-cell"> {entry.score}</td>
               </tr>
             ))}
           </tbody>
