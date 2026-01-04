@@ -7,6 +7,7 @@ const ctfSchema = new Schema(
       type: String,
       trim: true,
       required: [true, 'name required'],
+      unique: true,
     },
 
     type: {
