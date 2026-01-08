@@ -22,7 +22,7 @@ A platform powered by **AWS** to host and solve **Capture The Flag (CTF)** chall
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/sfeedbackx/ctf_platform.git
    cd ctf_platform/backend
    ```
 

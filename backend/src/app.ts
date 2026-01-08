@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { requestLogger } from './middlewares/requestLogger.js';
 import mainRoute from './router/mainRoute.js';
+import { apiLimiter } from './utils/rateLimitUtils.js';
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.get('/', (_req, res) => {
   res.send('hello world');
 });
 
-app.use('/api/v1', mainRoute);
+app.use('/api/v1', apiLimiter, mainRoute);
 
 app.use(errorHandler);
 
