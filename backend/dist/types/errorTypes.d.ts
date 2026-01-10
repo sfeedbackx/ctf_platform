@@ -1,0 +1,19 @@
+import type { HTTP_CODE } from './httpCodes.js';
+export interface AppError extends Error {
+    statusNumber?: HTTP_CODE | number;
+}
+export declare enum ERROR_NAME {
+    VALIDATION_ERROR = "VALIDATION_ERROR",
+    UNAUTHORIZED_ERROR = "UNAUTHORIZED_ERROR",
+    FORBIDDEN_ERROR = "FORBIDDEN_ERROR",
+    NOT_FOUND_ERROR = "NOT_FOUND_ERROR",
+    CONFLICT_ERROR = "CONFLICT_ERROR",
+    STATE_ERROR = "STATE_ERROR",
+    RATE_LIMIT_ERROR = "RATE_LIMIT_ERROR",
+    INTERNAL_ERROR = "INTERNAL_ERROR",
+    DATABASE_ERROR = "DATABASE_ERROR",
+    DOCKER_ERROR = "DOCKER_ERROR",
+    NETWORK_ERROR = "NETWORK_ERROR",
+    TIMEOUT_ERROR = "TIMEOUT_ERROR"
+}
+//# sourceMappingURL=errorTypes.d.ts.map

@@ -15,6 +15,7 @@ const ctfInstanceSchema = new Schema(
 
     expiresAt: {
       type: Date,
+      index: true,
       default: () => new Date(Date.now() + 2 * 60 * 60 * 1000),
     },
     url: {
@@ -28,6 +29,7 @@ const ctfInstanceSchema = new Schema(
       required: [true, 'status required'],
       enum: ['RUNNING', 'STOPPED', 'PENDING', 'FAILED', 'TERMINATED'],
       default: 'PENDING',
+      index: true,
     },
     containers: [
       {

@@ -4,6 +4,7 @@ import type { containerConfig } from '../src/types/dockerTypes.js';
 import { serviceType } from '../src/types/enums.js';
 import { ctfDifficulty, type Ictf } from '../src/types/ctfTypes.js';
 import Ctf from '../src/models/ctfModel.js';
+import configEnv from '../src/config/config.js';
 import connectToDb from '../src/config/db.js';
 function isMongoBulkWriteError(err: unknown): err is {
   name: string;
@@ -13,7 +14,7 @@ function isMongoBulkWriteError(err: unknown): err is {
 } {
   return err instanceof Error && err.name === 'MongoBulkWriteError';
 }
-const config: containerConfig = {
+const config0: containerConfig = {
   image: 'ctf_ssrf_race_backend',
   name: 'ssrf_race_backend',
   type: serviceType.BACKEND,
@@ -38,6 +39,7 @@ const config1: containerConfig = {
   env: {
     BACKEND_HOST: 'ctf_ssrf',
     BACKEND_PORT: '5000',
+    VITE_FLAG: configEnv.ssrfFlag
   },
   labels: {
     expiresAt: '',
@@ -45,7 +47,7 @@ const config1: containerConfig = {
     ctf_user: '',
   },
 };
-const containersConfig: containerConfig[] = [config, config1];
+const containersConfig: containerConfig[] = [config0, config1];
 
 const ctfChallenges: Ictf[] = [];
 
@@ -55,7 +57,7 @@ ctfChallenges.push({
   containersConfig: containersConfig,
   description: 'Who said education has to be expensive? This platform seems to handle enrollment and pricing automatically. Still, nothing is ever as perfect as it looks.',
   difficulty: ctfDifficulty.MID,
-  flag: `CTF{flag_1_${Math.random().toString(36).substring(7)}}`,
+  flag: 'cll{ss098fud63c2xgXPuVPimY3ZmkDmFsI+RfhCdqccOZwJKBqQI=}',
   type: 'WEB_EXPLOIT',
   resources: [],
   hints: ['Hint 1: The server talks to itself. What happens when you make it ask the right questions?',
@@ -67,11 +69,11 @@ const cleanCtfCollection = async () => {
   console.log('deleting ctf collection...');
   try {
     await Ctf.deleteMany({});
-    console.log(' Collection docs dropped successfully');
+    console.log('Collection docs dropped successfully');
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.log(
-        ' Collection docs does not exist — skipping drop',
+        'Collection docs does not exist — skipping drop',
         err.message,
       );
     } else {

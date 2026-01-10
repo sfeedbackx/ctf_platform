@@ -10,6 +10,7 @@ interface Config {
   maxAge: number;
   serverHost: string;
   dockerHost: string;
+  ssrfFlag: string;
 }
 
 export const paserNumber = (
@@ -30,6 +31,7 @@ const configEnv: Config = {
   maxAge: paserNumber(process.env.MAX_AGE) || 604800000,
   serverHost: process.env.SERVER_HOST || 'localhost',
   dockerHost: process.env.DOCKER_HOST || '',
+  ssrfFlag: process.env.SSRF_FLAG || 'flag',
 };
 
 export default configEnv;

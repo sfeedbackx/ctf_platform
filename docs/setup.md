@@ -33,7 +33,7 @@ This setup guide makes the following technical assumptions:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/sfeedbackx/ctf_platform.git
 cd ctf_platform/backend
 ```
 

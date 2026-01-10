@@ -93,9 +93,8 @@ The platform consists of:
 
 - JWT-based authentication
 - Dynamic Docker container management
-- Flag submission and tracking
+- Flag submission
 - Automatic cleanup of expired instances
-- User progress tracking
 
 ## Getting Started
 

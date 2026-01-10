@@ -7,7 +7,8 @@
 
 ## Authentication
 
-The API uses JWT (JSON Web Tokens) for authentication. Tokens are stored in HTTP-only cookies and automatically sent with each request.
+The API uses JWT (JSON Web Tokens) for authentication. Tokens are stored in
+HTTP-only cookies and automatically sent with each request.
 
 ### Authentication Flow
 
