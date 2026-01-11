@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { type CtfInstance } from '../types/ctf';
+import './ActiveInstanceBanner.css';
 
 interface Props {
   instance: CtfInstance;
@@ -29,33 +30,23 @@ export const ActiveInstanceBanner: React.FC<Props> = ({ instance, onStop }) => {
   }, [instance.expiresAt]);
 
   return (
-    <div className="bg-blue-600 text-white p-4 rounded-lg mb-6 shadow-lg">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h3 className="font-bold text-lg mb-1">Active Challenge Instance</h3>
-          <p className="text-sm opacity-90">
-            {instance.status === 'PENDING' ? (
-              <span className="animate-pulse">⏳ Starting instance...</span>
-            ) : (
-              <>
-                🔗 <a href={instance.url} target="_blank" rel="noopener noreferrer" 
-                     className="underline hover:text-blue-200">
-                  Open Challenge
-                </a>
-              </>
-            )}
-          </p>
-          <p className="text-sm mt-1">
-            ⏱️ Expires in: <span className="font-mono font-bold">{timeLeft}</span>
-          </p>
-        </div>
-        <button
-          onClick={onStop}
-          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-semibold transition"
-        >
-          Stop Instance
-        </button>
+    <div className="active-instance-banner">
+      <div className="info">
+        <h3>Active Challenge Instance</h3>
+        <p>
+          {instance.status === 'PENDING' ? (
+            <span className="pulse">⏳ Starting instance...</span>
+          ) : (
+            <>
+              🔗 <a href={instance.url} target="_blank" rel="noopener noreferrer">
+                Open Challenge
+              </a>
+            </>
+          )}
+        </p>
+        <p className="timer">⏱️ Expires in: {timeLeft}</p>
       </div>
+      <button onClick={onStop}>Stop Instance</button>
     </div>
   );
 };

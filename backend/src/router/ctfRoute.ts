@@ -7,14 +7,13 @@ import {
   submitFlag,
 } from '../controller/ctfController.js';
 import { jwtMiddleware } from '../middlewares/jwtMiddleware.js';
-import { instanceLimiter } from '../utils/rateLimitUtils.js';
+//import { instanceLimiter } from '../utils/rateLimitUtils.js';
 
 const ctfRoute = Router();
 
 ctfRoute.get('/', getCtfs);
 ctfRoute.post(
   '/:id/instances',
-  instanceLimiter,
   jwtMiddleware,
   createCtfInstance,
 );

@@ -4,9 +4,9 @@ import { authLimiter } from '../utils/rateLimitUtils.js';
 
 const authRoute = Router();
 
-authRoute.post('/signup', authLimiter, signUp);
+authRoute.post('/signup' , signUp);
 
-authRoute.post('/login', authLimiter, login);
+authRoute.post('/login', login);
 
 authRoute.post('/logout', logout);
 

@@ -25,24 +25,23 @@ const ChallengePage: React.FC = () => {
 
   // Handle starting a CTF instance
   const handleStartInstance = async (ctfId: string) => {
-    try {
-      setActionLoading(true);
-      const instance = await startInstance(ctfId);
-      
-      // Show success message
-      alert(`🚀 Instance started successfully!\n\nURL: ${instance.url}\n\nExpires in 1 hour`);
-      
-      // Optional: Automatically open the instance URL
-      if (instance.url) {
-        window.open(instance.url, '_blank');
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to start instance';
-      alert(`❌ Error: ${errorMessage}`);
-    } finally {
-      setActionLoading(false);
+  try {
+    setActionLoading(true);
+
+    const instance = await startInstance(ctfId);
+
+    // ✅ Redirect user to the challenge instance
+    if (instance.url) {
+      window.location.href = instance.url;
     }
-  };
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : 'Failed to start instance';
+    alert(` Error: ${errorMessage}`);
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   // Handle stopping the active instance
   const handleStopInstance = async () => {

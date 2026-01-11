@@ -1,121 +1,72 @@
 // src/services/authService.ts
-import axios from 'axios';
-import type { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export interface LoginCredentials {
   email: string;
   password: string;
 }
 
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  teamName?: string;
-}
-
 export interface User {
-  _id: string;
-  username: string;
+  id: string;
   email: string;
-  role: string;
-  score: number;
-  teamName?: string;
+  username?: string;
   solvedCtf: string[];
-  nbSolvedCtf: number;
-  createdAt: string;
-  updatedAt: string;
+  numberOfSolvedCtf: number;
 }
 
-const AUTH_BASE_URL = 'http://localhost:3000/api/auth';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+// ✅ shared axios config (cookies-based auth)
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true, // REQUIRED for httpOnly cookie
+});
 
 export const authService = {
-  // ✅ LOGIN
-  async login(
-    credentials: LoginCredentials
-  ): Promise<{ token: string; user: User }> {
-    try {
-      const response: AxiosResponse<{ token: string; userWithoutPassword: any }> =
-        await axios.post(`${AUTH_BASE_URL}/login`, credentials);
-
-      const { token, userWithoutPassword } = response.data;
-
-      // ✅ Normalize user fields
-      const user: User = {
-        _id: userWithoutPassword._id,
-        username: userWithoutPassword.username || userWithoutPassword.name ||  userWithoutPassword.email.split('@')[0] ,
-        email: userWithoutPassword.email || 'noemail@example.com',
-        role: userWithoutPassword.role || 'user',
-        score: userWithoutPassword.score ?? 0,
-        teamName: userWithoutPassword.teamName,
-        solvedCtf: userWithoutPassword.solvedCtf ?? [],
-        nbSolvedCtf: userWithoutPassword.nbSolvedCtf ?? 0,
-        createdAt: userWithoutPassword.createdAt ?? new Date().toISOString(),
-        updatedAt: userWithoutPassword.updatedAt ?? new Date().toISOString(),
-      };
-
-      // ✅ Persist auth
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      return { token, user };
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        throw new Error('Invalid credentials');
-      }
-      console.error('Login error:', error);
-      throw new Error('Login failed');
-    }
-  },
-
-  // ✅ REGISTER
-  async register(data: RegisterData): Promise<any> {
-    const response: AxiosResponse = await axios.post(`${AUTH_BASE_URL}/signup`, data);
+  // ================= REGISTER =================
+  async register(data: RegisterData): Promise<User> {
+    const response: AxiosResponse<User> = await api.post('/signup', data);
     return response.data;
   },
 
-  // ✅ CHECK AUTH
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
-  },
-
-  // ✅ LOGOUT
-  async logout(): Promise<void> {
-    try {
-      await axios.post(
-        `${AUTH_BASE_URL}/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-    } catch {
-      // backend logout optional
-    } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      delete axios.defaults.headers.common['Authorization'];
+  // ================= LOGIN =================
+  async login(email: string, password: string): Promise<User> {
+    if (!email || !password) {
+      throw new Error('Email or password missing');
     }
-  },
 
-  // ✅ GET CURRENT USER FROM LOCAL STORAGE
-  getCurrentUser(): User | null {
-    const user = localStorage.getItem('user');
-    return user ? (JSON.parse(user) as User) : null;
-  },
+    const response: AxiosResponse<{ userWithoutPassword: User }> =
+      await api.post('/login', {
+        email,
+        password,
+      });
 
-  // ✅ SAVE USER (update local storage)
-  saveUser(user: User): void {
+    const user = response.data.userWithoutPassword;
+
+    // ✅ only store non-sensitive user info
     localStorage.setItem('user', JSON.stringify(user));
+
+    return user;
   },
 
-  // ✅ CLEAR USER (logout)
-  clearUser(): void {
+  // ================= LOGOUT =================
+  async logout(): Promise<void> {
+    await api.post('/logout');
     localStorage.removeItem('user');
+  },
+
+  // ================= CURRENT USER =================
+  getCurrentUser(): User | null {
+    const raw = localStorage.getItem('user');
+    return raw ? JSON.parse(raw) : null;
   },
 };
 

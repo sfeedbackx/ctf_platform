@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -6,13 +5,17 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import axios from 'axios';
+
 import {
   authService,
   type User,
   type LoginCredentials,
   type RegisterData,
 } from '../services/authService';
+
+/* =====================
+   TYPES
+===================== */
 
 export interface AuthContextType {
   user: User | null;
@@ -21,16 +24,30 @@ export interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-  refreshUser: () => void; // ✅ added
+  refreshUser: () => void; // ✅ ADD THIS
 }
+
+/* =====================
+   CONTEXT (EXPORT IT)
+===================== */
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
+/* =====================
+   HOOK
+===================== */
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
   return context;
 };
+
+/* =====================
+   PROVIDER
+===================== */
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -38,84 +55,47 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state
+  // Init auth from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const raw = localStorage.getItem('user');
-
-    if (token && raw) {
-      try {
-        const u = JSON.parse(raw);
-
-        const normalizedUser: User = {
-          _id: u._id,
-          username: u.username || u.name || (u.email?.split('@')[0] ?? 'User'),
-          email: u.email || 'noemail@example.com',
-          role: u.role || 'user',
-          score: u.score ?? 0,
-          teamName: u.teamName,
-          solvedCtf: u.solvedCtf ?? [],
-          nbSolvedCtf: u.nbSolvedCtf ?? 0,
-          createdAt: u.createdAt ?? new Date().toISOString(),
-          updatedAt: u.updatedAt ?? new Date().toISOString(),
-        };
-
-        setUser(normalizedUser);
-        setIsAuthenticated(true);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      } catch {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-      }
-    }
-
+    refreshUser();
     setLoading(false);
   }, []);
 
-  // Login
   const login = async (credentials: LoginCredentials) => {
-    const { user } = await authService.login(credentials);
+    const user = await authService.login(
+      credentials.email,
+      credentials.password
+    );
     setUser(user);
-    setIsAuthenticated(true);
   };
 
-  // Register
   const register = async (data: RegisterData) => {
     await authService.register(data);
   };
 
-  // Logout
   const logout = async () => {
     await authService.logout();
     setUser(null);
-    setIsAuthenticated(false);
   };
 
-  // ✅ Refresh user from localStorage
+  // ✅ THIS FIXES YOUR ERROR
   const refreshUser = () => {
     const savedUser = authService.getCurrentUser();
-    if (savedUser) {
-      setUser(savedUser);
-      setIsAuthenticated(true);
-    } else {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
+    setUser(savedUser);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
+        isAuthenticated: Boolean(user),
         loading,
         login,
         register,
         logout,
-        refreshUser, // ✅ added here
+        refreshUser, // ✅ PROVIDED
       }}
     >
       {children}

@@ -1,0 +1,79 @@
+/* ActiveInstanceBanner.css */
+
+.active-instance-banner {
+  background-color: #020f2b; /* blue-600 */
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.active-instance-banner .info {
+  flex: 1;
+}
+
+.active-instance-banner h3 {
+  font-weight: 700;
+  font-size: 1.125rem; /* 18px */
+  margin-bottom: 0.25rem;
+}
+
+.active-instance-banner p {
+  font-size: 0.875rem; /* 14px */
+  opacity: 0.9;
+  margin: 0.25rem 0;
+}
+
+.active-instance-banner a {
+  text-decoration: underline;
+  color: white;
+  transition: color 0.2s;
+}
+
+.active-instance-banner a:hover {
+  color: #bfdbfe; /* blue-200 */
+}
+
+.active-instance-banner .timer {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.active-instance-banner button {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.active-instance-banner button:hover {
+  background-color: #dc2626; /* red-600 */
+}
+
+.active-instance-banner button:disabled {
+  background-color: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+}
+
+/* Animate pulse for pending state */
+.active-instance-banner .pulse {
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

@@ -24,8 +24,8 @@ services:
   docker-socket-proxy:
       container_name: dockerproxy
       # Uncomment the following ports section for development
-       #ports:
-        # - "2375:2375"
+      ports:
+         - "2375:2375"
       environment:
       - CONTAINERS=1      # create/start/stop/inspect containers
       - POST=1            # CRITICAL: allow POST requests
