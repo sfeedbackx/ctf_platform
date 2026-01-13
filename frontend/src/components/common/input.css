@@ -1,0 +1,32 @@
+/* Styles déjà définis dans index.css */
+/* Vous pouvez ajouter des styles supplémentaires ici si nécessaire */
+
+.input-group {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.input-password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 1rem;
+  transition: var(--transition);
+}
+
+.input-password-toggle:hover {
+  color: var(--primary);
+}

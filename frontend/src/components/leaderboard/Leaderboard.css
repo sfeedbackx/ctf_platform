@@ -1,0 +1,87 @@
+.leaderboard-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.leaderboard-container h1 {
+  color: var(--primary);
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 30px var(--primary-glow);
+}
+
+.leaderboard-table {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  overflow-x: auto;
+}
+
+.leaderboard-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  border-bottom: 2px solid var(--border);
+}
+
+.leaderboard-table th {
+  padding: 1rem;
+  text-align: left;
+  color: var(--primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.leaderboard-table td {
+  padding: 1rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.leaderboard-table tbody tr {
+  transition: var(--transition);
+}
+
+.leaderboard-table tbody tr:hover {
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.leaderboard-table .top-three {
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), transparent);
+}
+
+.rank-cell {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center !important;
+}
+
+.username-cell {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.score-cell {
+  font-weight: 700;
+  color: var(--success);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-table {
+    padding: 1rem;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
