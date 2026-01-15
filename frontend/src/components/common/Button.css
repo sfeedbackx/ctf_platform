@@ -1,3 +1,27 @@
+/* Button */
+.btn {
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 0.95rem;
+  background: var(--primary);
+  color: white;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Loading Spinner */
 .btn-loading {
   position: relative;
   color: transparent !important;
@@ -13,7 +37,7 @@
   margin-left: -8px;
   margin-top: -8px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: rgb(184, 155, 155);
+  border-top-color: #0066ff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

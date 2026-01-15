@@ -4,14 +4,14 @@ import './ChallengeCard.css';
 
 interface ChallengeCardProps {
   challenge: Ctf;
-  onStart?: (ctfId: string) => void;
+  onLaunchClick: (ctfId: string, ctfName: string) => void;
   onSubmitFlag?: (ctfId: string) => void;
   hasActiveInstance?: boolean;
 }
 
 const ChallengeCard: React.FC<ChallengeCardProps> = ({
   challenge,
-  onStart,
+  onLaunchClick,
   onSubmitFlag,
   hasActiveInstance = false,
 }) => {
@@ -28,22 +28,23 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     }
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    // If we have action handlers, prevent navigation and use them instead
-    if (onStart || onSubmitFlag) {
-      e.preventDefault();
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Since onLaunchClick is always provided, always prevent default navigation
+    e.preventDefault();
+  };
 
-      if (challenge.withSite && onStart) {
-        onStart(challenge.id);
-      } else if (!challenge.withSite && onSubmitFlag) {
-        onSubmitFlag(challenge.id);
-      }
-    }
-    // Otherwise, let Link handle navigation normally
+  const handleLaunchClickInternal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onLaunchClick(challenge.id, challenge.name);
+  };
+
+  const handleSubmitFlagClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSubmitFlag?.(challenge.id);
   };
 
   return (
-    <div className="challenge-card" onClick={handleClick}>
+    <div className="challenge-card" onClick={handleCardClick}>
       <div className="challenge-header">
         <h3>{challenge.name}</h3>
         {/* Solved badge - you'll need to track this in your app state */}
@@ -62,35 +63,27 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         </span>
       </div>
 
-      {/* Action buttons if handlers are provided */}
-      {(onStart || onSubmitFlag) && (
-        <div className="challenge-actions" style={{ marginTop: '12px' }}>
-          {challenge.withSite ? (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onStart?.(challenge.id);
-              }}
-              disabled={hasActiveInstance}
-              className={hasActiveInstance ? 'btn-disabled' : 'btn-primary'}
-            >
-              {hasActiveInstance
-                ? 'Stop Current Instance First'
-                : 'Start Instance'}
-            </button>
-          ) : (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onSubmitFlag?.(challenge.id);
-              }}
-              className="btn-success"
-            >
-              Submit Flag
-            </button>
-          )}
-        </div>
-      )}
+      {/* Action buttons - always show since onLaunchClick is required */}
+      <div className="challenge-actions" style={{ marginTop: '12px' }}>
+        {challenge.withSite ? (
+          <button
+            onClick={handleLaunchClickInternal}
+            disabled={hasActiveInstance}
+            className={hasActiveInstance ? 'btn-disabled' : 'btn-primary'}
+          >
+            {hasActiveInstance
+              ? 'Stop Current Instance First'
+              : 'Launch Instance'}
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmitFlagClick}
+            className="btn-success"
+          >
+            Submit Flag
+          </button>
+        )}
+      </div>
     </div>
   );
 };

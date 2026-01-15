@@ -6,10 +6,9 @@ const API_BASE_URL =
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: false, // JWT is in header, not cookies
+  withCredentials: false, 
 });
 
-// ✅ Attach token safely to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');

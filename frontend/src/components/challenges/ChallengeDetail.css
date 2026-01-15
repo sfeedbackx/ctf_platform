@@ -14,7 +14,6 @@
 .challenge-detail-header h1 {
   color: var(--primary);
   font-size: 2.5rem;
-  text-shadow: 0 0 20px var(--primary-glow);
   flex: 1;
   min-width: 300px;
 }
@@ -39,7 +38,6 @@
   background: var(--bg-card);
   border: 2px solid var(--border);
   border-radius: 12px;
-  backdrop-filter: blur(10px);
 }
 
 .info-item {
@@ -57,10 +55,10 @@
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  backdrop-filter: blur(10px);
 }
 
-.challenge-detail-content h2, .challenge-detail-content h3 {
+.challenge-detail-content h2, 
+.challenge-detail-content h3 {
   color: var(--primary);
   margin-bottom: 1rem;
   text-transform: uppercase;
@@ -73,7 +71,8 @@
   font-size: 1.05rem;
 }
 
-.challenge-hints, .challenge-files {
+.challenge-hints, 
+.challenge-files {
   margin-top: 2rem;
   padding: 1.5rem;
   background: rgba(0, 240, 255, 0.05);
@@ -119,7 +118,6 @@
   border: 2px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
-  backdrop-filter: blur(10px);
 }
 
 .challenge-submit h2 {
@@ -138,6 +136,30 @@
 .challenge-submit form .input {
   flex: 1;
   min-width: 250px;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 @media (max-width: 768px) {

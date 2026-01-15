@@ -1,14 +1,14 @@
 import api from './api';
 
-type InstanceStatus = 'running' | 'stopped'; // No enum
+export type InstanceStatus = 'RUNNING' | 'STOPPED';
 
 export interface Instance {
-  _id: string; //  MongoDB utilise _id
-  containers: string[]; // Array de Container IDs
+  _id: string;           // MongoDB instance ID
+  containers: string[];  // Container IDs
   userId: string;
-  ctfId: string; // ID du challenge
-  mainUrl: string; // URL pour accéder à l'instance
-  expiredAt: string; // Date d'expiration
+  ctfId: string;         // Challenge ID
+  mainUrl: string;       // URL for user to access the instance
+  expiresAt: string;     // Expiration date
   status: InstanceStatus;
   createdAt: string;
   updatedAt: string;
@@ -16,38 +16,34 @@ export interface Instance {
 
 export const instanceService = {
   /**
-   * Démarrer une nouvelle instance pour un challenge
+   * Start a new instance for a challenge
    */
   async startInstance(challengeId: string): Promise<Instance> {
-    // ✅ POST /api/v1/ctfs/:id/instances
-    const response = await api.post(`/ctfs/${challengeId}/instances`);
-    return response.data.data || response.data;
+    const response = await api.post(`/ctfs/${challengeId}/instances`, null, {
+      withCredentials: true,
+    });
+    return response.data || response.data.data; // handles both response shapes
   },
 
   /**
-   * Récupérer les instances actives de l'utilisateur
+   * Get the current user's active instance (if any)
    */
-  async getActiveInstances(): Promise<Instance[]> {
-    // ✅ GET /api/v1/ctfs/instances
-    const response = await api.get('/ctfs/instances');
-    return response.data.data || response.data || [];
+  async getActiveInstance(): Promise<Instance | null> {
+    const response = await api.get(`/ctfs/instances`, {
+      withCredentials: true,
+    });
+    // Backend returns: { success: true, instance: {...} } or null
+    return response.data.instance || null;
   },
 
   /**
-   * Récupérer une instance spécifique
-   */
-  async getInstance(instanceId: string): Promise<Instance> {
-    // ⚠️ Endpoint à créer dans le backend si nécessaire
-    const response = await api.get(`/ctfs/instances/${instanceId}`);
-    return response.data.data || response.data;
-  },
-
-  /**
-   * Arrêter une instance
+   * Stop a running instance
    */
   async stopInstance(instanceId: string) {
-    // ✅ PATCH /api/v1/ctfs/instances/:id
-    const response = await api.patch(`/ctfs/instances/${instanceId}`);
-    return response.data;
+    const response = await api.patch(`/ctfs/instances/${instanceId}`, null, {
+      withCredentials: true,
+    });
+    return response.data; // { success: true, message: "CTF instance stopped successfully" }
   },
 };
+export default instanceService;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Navbar.css';
 
@@ -16,21 +16,17 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          🚩 CTF Platform
+          Ctf Platform
         </Link>
 
         <ul className="navbar-menu">
-
           {isAuthenticated ? (
             <>
               <li>
-                <Link to="/">Home</Link>
+                <NavLink to="/challenges">Challenges</NavLink>
               </li>
               <li>
-                <Link to="/challenges">Challenges</Link>
-              </li>
-              <li>
-                <Link to="/profile">Profile</Link>
+                <NavLink to="/scoreboard">Scoreboard</NavLink>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout">

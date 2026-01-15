@@ -13,8 +13,6 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Challenges from './pages/Challenges';
 import ChallengeDetail from './components/challenges/ChallengeDetail';
-import Leaderboard from './components/leaderboard/Leaderboard';
-import Profile from './pages/Profile';
 import './App.css';
 
 // ✅ Fixed: Inside AuthProvider
@@ -63,17 +61,6 @@ const AppContent: React.FC = () => {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

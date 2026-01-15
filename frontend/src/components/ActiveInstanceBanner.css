@@ -1,79 +1,62 @@
-/* ActiveInstanceBanner.css */
-
 .active-instance-banner {
-  background-color: #020f2b; /* blue-600 */
-  color: white;
-  padding: 1rem 1.25rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background: rgba(0, 102, 255, 0.1);
+  border: 2px solid #0066ff;
+  border-radius: 12px;
+  padding: 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.active-instance-banner .info {
-  flex: 1;
-}
-
-.active-instance-banner h3 {
-  font-weight: 700;
-  font-size: 1.125rem; /* 18px */
+.info h3 {
+  color: #0066ff;
+  font-size: 1.1rem;
+  font-weight: 600;
   margin-bottom: 0.25rem;
 }
 
-.active-instance-banner p {
-  font-size: 0.875rem; /* 14px */
-  opacity: 0.9;
-  margin: 0.25rem 0;
+.info p {
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
 }
 
-.active-instance-banner a {
-  text-decoration: underline;
-  color: white;
-  transition: color 0.2s;
-}
-
-.active-instance-banner a:hover {
-  color: #bfdbfe; /* blue-200 */
-}
-
-.active-instance-banner .timer {
-  font-family: monospace;
-  font-weight: bold;
-}
-
-.active-instance-banner button {
-  background-color: #ef4444; /* red-500 */
-  color: white;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.active-instance-banner button:hover {
-  background-color: #dc2626; /* red-600 */
-}
-
-.active-instance-banner button:disabled {
-  background-color: #9ca3af; /* gray-400 */
-  cursor: not-allowed;
-}
-
-/* Animate pulse for pending state */
-.active-instance-banner .pulse {
-  display: inline-block;
+.pulse {
   animation: pulse 1.5s infinite;
 }
 
+.timer {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.active-instance-banner button {
+  padding: 0.5rem 1.25rem;
+  background: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.active-instance-banner button:hover {
+  background: var(--primary-dark);
+}
+
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+  .active-instance-banner {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
   }
 }

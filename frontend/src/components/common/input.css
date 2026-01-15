@@ -23,7 +23,7 @@
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 1rem;
   transition: var(--transition);
 }
 
