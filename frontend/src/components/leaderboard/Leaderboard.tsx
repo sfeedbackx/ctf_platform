@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { submissionService, type LeaderboardEntry } from '../../services/submissionService';
+import {
+  submissionService,
+  type LeaderboardEntry,
+} from '../../services/submissionService';
 import './Leaderboard.css';
 
 const Leaderboard: React.FC = () => {
@@ -19,7 +22,7 @@ const Leaderboard: React.FC = () => {
     };
 
     fetchLeaderboard();
-    
+
     // Refresh every 30 seconds
     const interval = setInterval(fetchLeaderboard, 30000);
     return () => clearInterval(interval);
@@ -27,10 +30,14 @@ const Leaderboard: React.FC = () => {
 
   const getMedalEmoji = (rank: number) => {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return rank;
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return rank;
     }
   };
 
@@ -41,7 +48,7 @@ const Leaderboard: React.FC = () => {
   return (
     <div className="leaderboard-container">
       <h1>🏆 Leaderboard</h1>
-      
+
       <div className="leaderboard-table">
         <table>
           <thead>
@@ -55,7 +62,10 @@ const Leaderboard: React.FC = () => {
           </thead>
           <tbody>
             {leaderboard.map((entry) => (
-              <tr key={entry.rank} className={entry.rank <= 3 ? 'top-three' : ''}>
+              <tr
+                key={entry.rank}
+                className={entry.rank <= 3 ? 'top-three' : ''}
+              >
                 <td className="rank-cell">{getMedalEmoji(entry.rank)}</td>
                 <td className="username-cell">{entry.username}</td>
                 <td>{entry.teamName || '-'}</td>

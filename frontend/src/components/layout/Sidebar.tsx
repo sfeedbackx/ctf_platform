@@ -6,8 +6,8 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const categories = [
-    { name: 'All',  path: '/challenges' },
-    { name: 'Web',  path: '/challenges?category=web' },
+    { name: 'All', path: '/challenges' },
+    { name: 'Web', path: '/challenges?category=web' },
     { name: 'Crypto', path: '/challenges?category=crypto' },
     { name: 'Reverse', path: '/challenges?category=reverse' },
     { name: 'Forensics', path: '/challenges?category=forensics' },
@@ -23,7 +23,11 @@ const Sidebar: React.FC = () => {
             <li key={cat.name}>
               <Link
                 to={cat.path}
-                className={location.search.includes(cat.name.toLowerCase()) ? 'active' : ''}
+                className={
+                  location.search.includes(cat.name.toLowerCase())
+                    ? 'active'
+                    : ''
+                }
               >
                 <span className="sidebar-icon">{cat.icon}</span>
                 {cat.name}
@@ -36,9 +40,15 @@ const Sidebar: React.FC = () => {
       <div className="sidebar-section">
         <h3>Difficulty</h3>
         <ul className="sidebar-list">
-          <li><Link to="/challenges?difficulty=easy">🟢 Easy</Link></li>
-          <li><Link to="/challenges?difficulty=medium">🟡 Medium</Link></li>
-          <li><Link to="/challenges?difficulty=hard">🔴 Hard</Link></li>
+          <li>
+            <Link to="/challenges?difficulty=easy">🟢 Easy</Link>
+          </li>
+          <li>
+            <Link to="/challenges?difficulty=medium">🟡 Medium</Link>
+          </li>
+          <li>
+            <Link to="/challenges?difficulty=hard">🔴 Hard</Link>
+          </li>
         </ul>
       </div>
     </aside>

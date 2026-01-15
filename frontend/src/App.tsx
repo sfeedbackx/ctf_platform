@@ -1,6 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';  // ✅ Updated import
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext'; // ✅ Updated import
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -10,7 +15,6 @@ import Challenges from './pages/Challenges';
 import ChallengeDetail from './components/challenges/ChallengeDetail';
 import Leaderboard from './components/leaderboard/Leaderboard';
 import Profile from './pages/Profile';
-import Admin from './pages/Admin';
 import './App.css';
 
 // ✅ Fixed: Inside AuthProvider
@@ -26,7 +30,9 @@ const AppContent: React.FC = () => {
     );
   }
 
-  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+    children,
+  }) => {
     return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
   };
 
@@ -38,17 +44,17 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          
+
           {/* ✅ PROTECTED CTF */}
-          <Route 
-            path="/challenges" 
+          <Route
+            path="/challenges"
             element={
               <ProtectedRoute>
                 <Challenges />
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           <Route
             path="/challenges/:id"
             element={
@@ -57,7 +63,7 @@ const AppContent: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          
+
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route
             path="/profile"
@@ -67,15 +73,7 @@ const AppContent: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

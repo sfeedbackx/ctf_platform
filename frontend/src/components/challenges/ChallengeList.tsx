@@ -14,15 +14,18 @@ const ChallengeList: React.FC = () => {
     const fetchChallenges = async () => {
       try {
         setLoading(true);
-        const data = await challengeService.getAllChallenges(category, difficulty);
+        const data = await challengeService.getAllChallenges(
+          category,
+          difficulty,
+        );
 
         // Map API data to Ctf type
         const mappedData: Ctf[] = data.map((challenge: any, index: number) => ({
           id: challenge.id || `challenge-${index}`,
           name: challenge.name || challenge.title || `Challenge ${index}`,
-          type: challenge.type as CtfType || 'OTHER',
+          type: (challenge.type as CtfType) || 'OTHER',
           description: challenge.description || '',
-          difficulty: challenge.difficulty as CtfDifficulty || 'MID',
+          difficulty: (challenge.difficulty as CtfDifficulty) || 'MID',
           hints: challenge.hints || [],
           resources: challenge.resources || [],
           withSite: challenge.withSite ?? false,
@@ -54,7 +57,10 @@ const ChallengeList: React.FC = () => {
           <option value="OTHER">Other</option>
         </select>
 
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+        >
           <option value="">All Difficulties</option>
           <option value="EASY">Easy</option>
           <option value="MID">Medium</option>

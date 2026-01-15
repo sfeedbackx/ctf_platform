@@ -1,6 +1,11 @@
 import api from './api';
 
-export type ChallengeType = 'WEB_EXPLOIT' | 'BINARY_EXPLOIT' | 'CRYPTO' | 'FORENSICS' | 'REVERSE';
+export type ChallengeType =
+  | 'WEB_EXPLOIT'
+  | 'BINARY_EXPLOIT'
+  | 'CRYPTO'
+  | 'FORENSICS'
+  | 'REVERSE';
 export type Difficulty = 'EASY' | 'MID' | 'HARD';
 
 export interface Challenge {
@@ -20,12 +25,15 @@ export interface Challenge {
 }
 
 export const challengeService = {
-  async getAllChallenges(category?: string, difficulty?: string): Promise<Challenge[]> {
+  async getAllChallenges(
+    category?: string,
+    difficulty?: string,
+  ): Promise<Challenge[]> {
     const params = new URLSearchParams();
     if (category) params.append('type', category);
     if (difficulty) params.append('difficulty', difficulty);
-    
-    const response = await api.get(`/ctfs?${params.toString()}`);  // ✅ Backend route
+
+    const response = await api.get(`/ctfs?${params.toString()}`); // ✅ Backend route
     return response.data.data || response.data || [];
   },
 
@@ -35,11 +43,11 @@ export const challengeService = {
   },
 
   async submitFlag(challengeId: string, flag: string) {
-    const response = await api.patch(`/ctfs/${challengeId}`, { flag });  // ✅ Backend PATCH
+    const response = await api.patch(`/ctfs/${challengeId}`, { flag }); // ✅ Backend PATCH
     return {
       correct: response.data.success || response.data.correct,
       message: response.data.message || 'Invalid flag',
-      points: response.data.points || 0
+      points: response.data.points || 0,
     };
-  }
+  },
 };

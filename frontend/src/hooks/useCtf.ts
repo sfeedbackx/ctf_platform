@@ -4,7 +4,9 @@ import type { Ctf, CtfInstance } from '../types/ctf';
 
 export const useCtf = () => {
   const [ctfs, setCtfs] = useState<Ctf[]>([]);
-  const [activeInstance, setActiveInstance] = useState<CtfInstance | null>(null);
+  const [activeInstance, setActiveInstance] = useState<CtfInstance | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +16,9 @@ export const useCtf = () => {
       const data = await ctfService.getAllCtfs();
       setCtfs(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load challenges');
+      setError(
+        err instanceof Error ? err.message : 'Failed to load challenges',
+      );
     } finally {
       setLoading(false);
     }
@@ -36,7 +40,8 @@ export const useCtf = () => {
       setActiveInstance(instance);
       return instance;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to start instance';
+      const message =
+        err instanceof Error ? err.message : 'Failed to start instance';
       setError(message);
       throw err;
     }
@@ -48,7 +53,8 @@ export const useCtf = () => {
       await ctfService.stopInstance(instanceId);
       setActiveInstance(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to stop instance';
+      const message =
+        err instanceof Error ? err.message : 'Failed to stop instance';
       setError(message);
       throw err;
     }

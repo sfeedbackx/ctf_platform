@@ -15,7 +15,10 @@ const ChallengeDetail: React.FC = () => {
 
   const [challenge, setChallenge] = useState<Ctf | null>(null);
   const [flag, setFlag] = useState('');
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -64,10 +67,14 @@ const ChallengeDetail: React.FC = () => {
         await refreshUser();
 
         // Refresh challenge after submission
-        const updatedDataFromApi: any = await challengeService.getChallengeById(id);
+        const updatedDataFromApi: any =
+          await challengeService.getChallengeById(id);
         const updatedChallenge: Ctf = {
           id: updatedDataFromApi.id || id,
-          name: updatedDataFromApi.name || updatedDataFromApi.title || `Challenge ${id}`,
+          name:
+            updatedDataFromApi.name ||
+            updatedDataFromApi.title ||
+            `Challenge ${id}`,
           type: (updatedDataFromApi.type as CtfType) || 'OTHER',
           description: updatedDataFromApi.description || '',
           difficulty: (updatedDataFromApi.difficulty as CtfDifficulty) || 'MID',
@@ -80,7 +87,10 @@ const ChallengeDetail: React.FC = () => {
         setMessage({ type: 'error', text: 'Incorrect flag. Try again!' });
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.error || 'Submission failed' });
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.error || 'Submission failed',
+      });
     } finally {
       setLoading(false);
     }
@@ -99,7 +109,9 @@ const ChallengeDetail: React.FC = () => {
           {challenge.type.replace('_', ' ')}
         </span>
         <span className="info-item">{challenge.difficulty}</span>
-        <span className="info-item">With Site: {challenge.withSite ? 'Yes' : 'No'}</span>
+        <span className="info-item">
+          With Site: {challenge.withSite ? 'Yes' : 'No'}
+        </span>
       </div>
 
       <div className="challenge-detail-content">
@@ -131,7 +143,9 @@ const ChallengeDetail: React.FC = () => {
 
       <div className="challenge-submit">
         <h2>Submit Flag</h2>
-        {message && <div className={`alert alert-${message.type}`}>{message.text}</div>}
+        {message && (
+          <div className={`alert alert-${message.type}`}>{message.text}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Input

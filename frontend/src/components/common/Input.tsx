@@ -6,7 +6,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-const Input: React.FC<InputProps> = ({ label, error, className = '', ...props }) => {
+const Input: React.FC<InputProps> = ({
+  label,
+  error,
+  className = '',
+  ...props
+}) => {
   return (
     <div className={`input-group ${className}`}>
       {label && <label className="input-label">{label}</label>}

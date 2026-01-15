@@ -1,7 +1,6 @@
 import api from './api';
 
-type InstanceStatus = 'running' | 'stopped';  // No enum
-
+type InstanceStatus = 'running' | 'stopped'; // No enum
 
 export interface Instance {
   _id: string; //  MongoDB utilise _id
@@ -50,5 +49,5 @@ export const instanceService = {
     // ✅ PATCH /api/v1/ctfs/instances/:id
     const response = await api.patch(`/ctfs/instances/${instanceId}`);
     return response.data;
-  }
+  },
 };

@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -20,18 +20,17 @@ const Navbar: React.FC = () => {
         </Link>
 
         <ul className="navbar-menu">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/challenges">Challenges</Link></li>
-          <li><Link to="/leaderboard">Leaderboard</Link></li>
-          
+
           {isAuthenticated ? (
             <>
-              <li><Link to="/profile">Profile</Link></li>
-              {user?.role === 'admin' && (
-                <li><Link to="/admin">Admin</Link></li>
-              )}
               <li>
-                <span className="user-score"> {user?.score} pts</span>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/challenges">Challenges</Link>
+              </li>
+              <li>
+                <Link to="/profile">Profile</Link>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout">
@@ -41,8 +40,16 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <>
-              <li><Link to="/login" className="btn-login">Login</Link></li>
-              <li><Link to="/register" className="btn-register">Register</Link></li>
+              <li>
+                <Link to="/login" className="btn-login">
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link to="/register" className="btn-register">
+                  Register
+                </Link>
+              </li>
             </>
           )}
         </ul>

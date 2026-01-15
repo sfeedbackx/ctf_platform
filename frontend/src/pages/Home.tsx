@@ -18,18 +18,12 @@ const Home: React.FC = () => {
             <Link to="/register" className="btn btn-primary btn-large">
               Get Started
             </Link>
-            <Link to="/challenges" className="btn btn-secondary btn-large">
-              Browse Challenges
-            </Link>
           </div>
         )}
         {isAuthenticated && (
           <div className="hero-actions">
             <Link to="/challenges" className="btn btn-primary btn-large">
               View Challenges
-            </Link>
-            <Link to="/leaderboard" className="btn btn-secondary btn-large">
-              Leaderboard
             </Link>
           </div>
         )}
@@ -56,23 +50,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="stats">
-        <h2>Platform Statistics</h2>
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-number">50+</div>
-            <div className="stat-label">Challenges</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">1000+</div>
-            <div className="stat-label">Players</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">5000+</div>
-            <div className="stat-label">Submissions</div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

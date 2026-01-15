@@ -6,7 +6,11 @@ interface Props {
   onClose: () => void;
 }
 
-export const FlagSubmitModal: React.FC<Props> = ({ ctfName, onSubmit, onClose }) => {
+export const FlagSubmitModal: React.FC<Props> = ({
+  ctfName,
+  onSubmit,
+  onClose,
+}) => {
   const [flag, setFlag] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -20,8 +24,10 @@ export const FlagSubmitModal: React.FC<Props> = ({ ctfName, onSubmit, onClose })
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Submit Flag</h2>
-        <p className="text-gray-600 mb-4">Challenge: <span className="font-semibold">{ctfName}</span></p>
-        
+        <p className="text-gray-600 mb-4">
+          Challenge: <span className="font-semibold">{ctfName}</span>
+        </p>
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -31,7 +37,7 @@ export const FlagSubmitModal: React.FC<Props> = ({ ctfName, onSubmit, onClose })
             className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             autoFocus
           />
-          
+
           <div className="flex gap-3">
             <button
               type="submit"

@@ -12,17 +12,29 @@ const Footer: React.FC = () => {
         <div className="footer-section">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="/challenges">Challenges</a></li>
-            <li><a href="/leaderboard">Leaderboard</a></li>
-            <li><a href="/about">About</a></li>
+            <li>
+              <a href="/challenges">Challenges</a>
+            </li>
+            <li>
+              <a href="/leaderboard">Leaderboard</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
           </ul>
         </div>
         <div className="footer-section">
           <h4>Resources</h4>
           <ul>
-            <li><a href="/rules">Rules</a></li>
-            <li><a href="/faq">FAQ</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/rules">Rules</a>
+            </li>
+            <li>
+              <a href="/faq">FAQ</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </div>
       </div>

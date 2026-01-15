@@ -14,19 +14,17 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (isAuthenticated) navigate('/');
+  if (isAuthenticated) navigate('/challenges');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
+      const credentials = { email, password };
+      await login(credentials);
 
-// ✅ CORRECT:
-const credentials = { email, password };
-await login(credentials);
-
-      navigate('/');
+      navigate('/challenges');
     } catch (err: any) {
       setError(err.message || 'Failed to login');
     } finally {
@@ -35,16 +33,34 @@ await login(credentials);
   };
 
   return (
-    <div className="login-page">
-      <h1>Login</h1>
-      {error && <div className="alert alert-error">{error}</div>}
-      <form onSubmit={handleSubmit} className="login-form">
-        <Input type="email" name="email" label="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <Input type="password" name="password" label="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-        <Button type="submit" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</Button>
-      </form>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1>Login</h1>
+        {error && <div className="alert alert-error">{error}</div>}
+        <form onSubmit={handleSubmit} className="login-form">
+          <Input
+            type="email"
+            name="email"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            name="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Login; 
+export default Login;

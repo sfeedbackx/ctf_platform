@@ -10,11 +10,16 @@ export const useChallenges = (category?: string, difficulty?: string) => {
     const fetchChallenges = async () => {
       try {
         setLoading(true);
-        const data = await challengeService.getAllChallenges(category, difficulty);
+        const data = await challengeService.getAllChallenges(
+          category,
+          difficulty,
+        );
         setChallenges(data);
         setError(null);
-      } catch (err: any) {
-        setError(err.message || 'Erreur lors du chargement');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Erreur lors du chargement');
+        }
       } finally {
         setLoading(false);
       }

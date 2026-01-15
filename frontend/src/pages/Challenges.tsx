@@ -8,57 +8,61 @@ import './Challenges.css';
 
 const ChallengePage: React.FC = () => {
   const { user } = useAuth();
-  const { 
-    ctfs, 
-    activeInstance, 
-    loading, 
-    error, 
-    startInstance, 
-    stopInstance, 
-    submitFlag 
+  const {
+    ctfs,
+    activeInstance,
+    loading,
+    error,
+    startInstance,
+    stopInstance,
+    submitFlag,
   } = useCtf();
-  
-  const [flagModalCtf, setFlagModalCtf] = useState<{ id: string; name: string } | null>(null);
+
+  const [flagModalCtf, setFlagModalCtf] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterDifficulty, setFilterDifficulty] = useState<string>('all');
 
   // Handle starting a CTF instance
   const handleStartInstance = async (ctfId: string) => {
-  try {
-    setActionLoading(true);
+    try {
+      setActionLoading(true);
 
-    const instance = await startInstance(ctfId);
+      const instance = await startInstance(ctfId);
 
-    // ✅ Redirect user to the challenge instance
-    if (instance.url) {
-      window.location.href = instance.url;
+      // ✅ Redirect user to the challenge instance
+      if (instance.url) {
+        window.location.href = instance.url;
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to start instance';
+      alert(` Error: ${errorMessage}`);
+    } finally {
+      setActionLoading(false);
     }
-  } catch (err) {
-    const errorMessage =
-      err instanceof Error ? err.message : 'Failed to start instance';
-    alert(` Error: ${errorMessage}`);
-  } finally {
-    setActionLoading(false);
-  }
-};
+  };
 
   // Handle stopping the active instance
   const handleStopInstance = async () => {
     if (!activeInstance) return;
-    
+
     const confirmed = window.confirm(
-      'Are you sure you want to stop this instance?\n\nYou will need to restart it to continue the challenge.'
+      'Are you sure you want to stop this instance?\n\nYou will need to restart it to continue the challenge.',
     );
-    
+
     if (!confirmed) return;
-    
+
     try {
       setActionLoading(true);
       await stopInstance(activeInstance.id);
       alert('✓ Instance stopped successfully');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to stop instance';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to stop instance';
       alert(`❌ Error: ${errorMessage}`);
     } finally {
       setActionLoading(false);
@@ -68,14 +72,14 @@ const ChallengePage: React.FC = () => {
   // Handle flag submission
   const handleSubmitFlag = async (flag: string) => {
     if (!flagModalCtf) return;
-    
+
     try {
       setActionLoading(true);
       const result = await submitFlag(flagModalCtf.id, flag);
-      
+
       // Show success message
       alert(`🎉 ${result.message}`);
-      
+
       // Close modal
       setFlagModalCtf(null);
     } catch (err) {
@@ -90,9 +94,11 @@ const ChallengePage: React.FC = () => {
   const solvedCtfIds: string[] = []; // TODO: Get from user.solvedCtfs when available
 
   // Filter challenges
-  const filteredCtfs = ctfs.filter(ctf => {
-    const categoryMatch = filterCategory === 'all' || ctf.type === filterCategory;
-    const difficultyMatch = filterDifficulty === 'all' || ctf.difficulty === filterDifficulty;
+  const filteredCtfs = ctfs.filter((ctf) => {
+    const categoryMatch =
+      filterCategory === 'all' || ctf.type === filterCategory;
+    const difficultyMatch =
+      filterDifficulty === 'all' || ctf.difficulty === filterDifficulty;
     return categoryMatch && difficultyMatch;
   });
 
@@ -113,9 +119,7 @@ const ChallengePage: React.FC = () => {
         <div className="error-container">
           <h2>❌ Error Loading Challenges</h2>
           <p>{error}</p>
-          <button onClick={() => window.location.reload()}>
-            Retry
-          </button>
+          <button onClick={() => window.location.reload()}>Retry</button>
         </div>
       </div>
     );
@@ -130,9 +134,9 @@ const ChallengePage: React.FC = () => {
 
       {/* Active Instance Banner */}
       {activeInstance && (
-        <ActiveInstanceBanner 
-          instance={activeInstance} 
-          onStop={handleStopInstance} 
+        <ActiveInstanceBanner
+          instance={activeInstance}
+          onStop={handleStopInstance}
         />
       )}
 
@@ -140,8 +144,8 @@ const ChallengePage: React.FC = () => {
       <div className="filters-container">
         <div className="filter-group">
           <label>Category:</label>
-          <select 
-            value={filterCategory} 
+          <select
+            value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
           >
             <option value="all">All Categories</option>
@@ -153,8 +157,8 @@ const ChallengePage: React.FC = () => {
 
         <div className="filter-group">
           <label>Difficulty:</label>
-          <select 
-            value={filterDifficulty} 
+          <select
+            value={filterDifficulty}
             onChange={(e) => setFilterDifficulty(e.target.value)}
           >
             <option value="all">All Difficulties</option>
@@ -165,21 +169,6 @@ const ChallengePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Challenge Stats */}
-      <div className="stats-container">
-        <div className="stat-card">
-          <span className="stat-value">{ctfs.length}</span>
-          <span className="stat-label">Total Challenges</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{solvedCtfIds.length}</span>
-          <span className="stat-label">Solved</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{activeInstance ? '1' : '0'}</span>
-          <span className="stat-label">Active Instance</span>
-        </div>
-      </div>
 
       {/* Challenges Grid */}
       <div className="challenges-grid">
@@ -193,8 +182,12 @@ const ChallengePage: React.FC = () => {
               key={ctf.id}
               challenge={ctf}
               onStart={handleStartInstance}
-              onSubmitFlag={(ctfId) => setFlagModalCtf({ id: ctfId, name: ctf.name })}
-              hasActiveInstance={!!activeInstance && activeInstance.ctfId !== ctf.id}
+              onSubmitFlag={(ctfId) =>
+                setFlagModalCtf({ id: ctfId, name: ctf.name })
+              }
+              hasActiveInstance={
+                !!activeInstance && activeInstance.ctfId !== ctf.id
+              }
             />
           ))
         )}

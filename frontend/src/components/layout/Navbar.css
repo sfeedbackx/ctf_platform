@@ -61,23 +61,21 @@
   letter-spacing: 1px;
 }
 
-.navbar-menu a::before {
+.navbar-menu a:not(.btn-register, .btn-login)::before {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
   transition: var(--transition);
   transform: translateX(-50%);
 }
 
-.navbar-menu a:hover {
-  color: var(--primary);
-}
 
-.navbar-menu a:hover::before {
+
+.navbar-menu a:not(.btn-register, .btn-login):hover::before {
   width: 80%;
 }
 
@@ -131,15 +129,15 @@
 }
 
 .btn-register {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border: none;
-  box-shadow: 0 0 20px var(--primary-glow);
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 
 .btn-register:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px var(--primary-glow);
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 
 @media (max-width: 768px) {

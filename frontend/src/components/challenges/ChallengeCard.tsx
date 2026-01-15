@@ -9,18 +9,22 @@ interface ChallengeCardProps {
   hasActiveInstance?: boolean;
 }
 
-const ChallengeCard: React.FC<ChallengeCardProps> = ({ 
-  challenge, 
+const ChallengeCard: React.FC<ChallengeCardProps> = ({
+  challenge,
   onStart,
   onSubmitFlag,
-  hasActiveInstance = false
+  hasActiveInstance = false,
 }) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
-      case 'easy': return 'green';
-      case 'mid': return 'orange';
-      case 'hard': return 'red';
-      default: return 'gray';
+      case 'easy':
+        return 'green';
+      case 'mid':
+        return 'orange';
+      case 'hard':
+        return 'red';
+      default:
+        return 'gray';
     }
   };
 
@@ -28,7 +32,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     // If we have action handlers, prevent navigation and use them instead
     if (onStart || onSubmitFlag) {
       e.preventDefault();
-      
+
       if (challenge.withSite && onStart) {
         onStart(challenge.id);
       } else if (!challenge.withSite && onSubmitFlag) {
@@ -44,14 +48,16 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         <h3>{challenge.name}</h3>
         {/* Solved badge - you'll need to track this in your app state */}
       </div>
-      
+
       <p className="challenge-description">
         {challenge.description || 'No description available'}
       </p>
-      
+
       <div className="challenge-footer">
         <span className="challenge-category">{challenge.type}</span>
-        <span className={`challenge-difficulty ${getDifficultyColor(challenge.difficulty)}`}>
+        <span
+          className={`challenge-difficulty ${getDifficultyColor(challenge.difficulty)}`}
+        >
           {challenge.difficulty}
         </span>
       </div>
@@ -68,7 +74,9 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
               disabled={hasActiveInstance}
               className={hasActiveInstance ? 'btn-disabled' : 'btn-primary'}
             >
-              {hasActiveInstance ? 'Stop Current Instance First' : 'Start Instance'}
+              {hasActiveInstance
+                ? 'Stop Current Instance First'
+                : 'Start Instance'}
             </button>
           ) : (
             <button

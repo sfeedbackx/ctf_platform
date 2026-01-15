@@ -38,7 +38,8 @@ export const ActiveInstanceBanner: React.FC<Props> = ({ instance, onStop }) => {
             <span className="pulse">⏳ Starting instance...</span>
           ) : (
             <>
-              🔗 <a href={instance.url} target="_blank" rel="noopener noreferrer">
+              🔗{' '}
+              <a href={instance.url} target="_blank" rel="noopener noreferrer">
                 Open Challenge
               </a>
             </>

@@ -1,7 +1,10 @@
 // src/pages/Profile.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { submissionService, type Submission } from '../services/submissionService';
+import {
+  submissionService,
+  type Submission,
+} from '../services/submissionService';
 import './Profile.css';
 
 const Profile: React.FC = () => {
@@ -62,11 +65,12 @@ const Profile: React.FC = () => {
   const avatarLetter = username.charAt(0).toUpperCase();
   const email = user.email ?? 'N/A';
   const score = user.score ?? 0;
-  const correctSubmissions = submissions.filter(s => s.correct).length;
+  const correctSubmissions = submissions.filter((s) => s.correct).length;
   const totalSubmissions = submissions.length;
-  const successRate = totalSubmissions > 0
-    ? Math.round((correctSubmissions / totalSubmissions) * 100)
-    : 0;
+  const successRate =
+    totalSubmissions > 0
+      ? Math.round((correctSubmissions / totalSubmissions) * 100)
+      : 0;
 
   return (
     <div className="profile-page">
@@ -103,7 +107,9 @@ const Profile: React.FC = () => {
         {loading ? (
           <p className="text-gray-400">Loading submissions...</p>
         ) : submissions.length === 0 ? (
-          <p className="text-gray-400">No submissions yet. Start solving challenges!</p>
+          <p className="text-gray-400">
+            No submissions yet. Start solving challenges!
+          </p>
         ) : (
           <table className="submissions-table">
             <thead>
@@ -126,7 +132,9 @@ const Profile: React.FC = () => {
                       {submission.correct ? '✓ Correct' : '✗ Incorrect'}
                     </span>
                   </td>
-                  <td>{new Date(submission.submittedAt).toLocaleDateString()}</td>
+                  <td>
+                    {new Date(submission.submittedAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))}
             </tbody>

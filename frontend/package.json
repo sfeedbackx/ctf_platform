@@ -9,7 +9,10 @@
     "vercel-build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "lint": "eslint 'src/**/*.ts'",
+    "format": "prettier --write \"src/**/*.{js,ts,json,tsx}\"",
+    "check": "prettier --check \"src/**/*.{js,ts,json,tsx}\""
   },
   "dependencies": {
     "axios": "^1.13.2",
@@ -21,15 +24,6 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/axios": "^0.9.36",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/dockerode": "^3.3.47",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/mongoose": "^5.11.96",
-    "@types/node": "^24.10.4",
-    "@types/node-cron": "^3.0.11",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -37,10 +31,11 @@
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
+    "prettier": "^3.7.4",
     "gh-pages": "^6.3.0",
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^5.4.21"
+    "vite": "^7.3.1"
   }
 }

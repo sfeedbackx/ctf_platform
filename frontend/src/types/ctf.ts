@@ -1,6 +1,11 @@
 export type CtfDifficulty = 'EASY' | 'MID' | 'HARD';
 export type CtfType = 'WEB_EXPLOIT' | 'BE' | 'OTHER';
-export type InstanceState = 'RUNNING' | 'STOPPED' | 'PENDING' | 'FAILED' | 'TERMINATED';
+export type InstanceState =
+  | 'RUNNING'
+  | 'STOPPED'
+  | 'PENDING'
+  | 'FAILED'
+  | 'TERMINATED';
 
 export interface Ctf {
   id: string;

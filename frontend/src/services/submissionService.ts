@@ -1,13 +1,12 @@
 // src/services/submissionService.ts
-import api from './api';
 
 export interface Submission {
   _id: string;
-  ctfId: string;        
+  ctfId: string;
   userId: string;
   flag: string;
   correct: boolean;
-  submittedAt: string;  
+  submittedAt: string;
   points?: number;
   ctf?: { _id: string; name: string };
 }
@@ -33,7 +32,7 @@ export const submissionService = {
         correct: true,
         submittedAt: new Date().toISOString(),
         points: 50,
-        ctf: { _id: 'ctf1', name: 'Crypto Challenge' }
+        ctf: { _id: 'ctf1', name: 'Crypto Challenge' },
       },
       {
         _id: 'sub2',
@@ -43,8 +42,8 @@ export const submissionService = {
         correct: false,
         submittedAt: new Date().toISOString(),
         points: 0,
-        ctf: { _id: 'ctf2', name: 'Web Exploit' }
-      }
+        ctf: { _id: 'ctf2', name: 'Web Exploit' },
+      },
     ];
   },
 
@@ -55,7 +54,7 @@ export const submissionService = {
       { rank: 2, username: 'Bob', score: 100, solvedCount: 8, _id: 'u2' },
       { rank: 3, username: 'Charlie', score: 80, solvedCount: 6, _id: 'u3' },
       { rank: 4, username: 'David', score: 60, solvedCount: 4, _id: 'u4' },
-      { rank: 5, username: 'Eve', score: 50, solvedCount: 3, _id: 'u5' }
+      { rank: 5, username: 'Eve', score: 50, solvedCount: 3, _id: 'u5' },
     ];
   },
 
@@ -70,7 +69,7 @@ export const submissionService = {
         correct: true,
         submittedAt: new Date().toISOString(),
         points: 50,
-        ctf: { _id: 'ctf1', name: 'Crypto Challenge' }
+        ctf: { _id: 'ctf1', name: 'Crypto Challenge' },
       },
       {
         _id: 'sub2',
@@ -80,8 +79,8 @@ export const submissionService = {
         correct: false,
         submittedAt: new Date().toISOString(),
         points: 0,
-        ctf: { _id: 'ctf2', name: 'Web Exploit' }
-      }
+        ctf: { _id: 'ctf2', name: 'Web Exploit' },
+      },
     ];
-  }
+  },
 };

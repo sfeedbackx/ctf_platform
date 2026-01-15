@@ -13,7 +13,9 @@ export const ctfService = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Failed to fetch CTFs' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Failed to fetch CTFs' }));
       throw new Error(error.message);
     }
 
@@ -29,7 +31,9 @@ export const ctfService = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Failed to fetch active instance' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Failed to fetch active instance' }));
       throw new Error(error.message);
     }
 
@@ -47,7 +51,9 @@ export const ctfService = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Failed to start instance' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Failed to start instance' }));
       throw new Error(error.message);
     }
 
@@ -58,13 +64,18 @@ export const ctfService = {
   // Stop a running instance
   // =========================
   async stopInstance(instanceId: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/ctfs/instances/${instanceId}`, {
-      method: 'PATCH',
-      credentials: 'include',
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/ctfs/instances/${instanceId}`,
+      {
+        method: 'PATCH',
+        credentials: 'include',
+      },
+    );
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Failed to stop instance' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Failed to stop instance' }));
       throw new Error(error.message);
     }
   },
@@ -74,7 +85,7 @@ export const ctfService = {
   // =========================
   async submitFlag(
     ctfId: string,
-    flag: string
+    flag: string,
   ): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${API_BASE_URL}/ctfs/${ctfId}`, {
       method: 'PATCH',
@@ -84,7 +95,9 @@ export const ctfService = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Wrong flag' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Wrong flag' }));
       throw new Error(error.message);
     }
 
