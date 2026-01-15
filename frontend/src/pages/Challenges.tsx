@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useCtf } from '../hooks/useCtf';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/common/ToastContainer';
+import { getErrorMessage } from '../utils/errorHandler';
 import ChallengeCard from '../components/challenges/ChallengeCard';
 import { ActiveInstanceBanner } from '../components/ActiveInstanceBanner';
 import Modal from '../components/common/Modal';
-import { FlagSubmitModal } from '../components/FlagSubmitModal';
+import { ChallengeModal } from '../components/challenges/ChallengeModal';
 import './Challenges.css';
-import { type CtfInstance } from '../types/ctf';
+import { type CtfInstance, type Ctf } from '../types/ctf';
 
 const ChallengePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const { showToast } = useToast();
   const {
     ctfs,
     activeInstance,
@@ -20,10 +23,7 @@ const ChallengePage: React.FC = () => {
     submitFlag,
   } = useCtf();
 
-  const [flagModalCtf, setFlagModalCtf] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<Ctf | null>(null);
   const [launchModalCtf, setLaunchModalCtf] = useState<{
     id: string;
     name: string;
@@ -45,10 +45,11 @@ const ChallengePage: React.FC = () => {
       const instance = await startInstance(launchModalCtf.id);
       if (instance.url) {
         setInstanceUrl(instance.url);
+        showToast('Instance launched successfully!', 'success');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to start instance';
-      alert(`Error: ${errorMessage}`);
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -62,9 +63,8 @@ const ChallengePage: React.FC = () => {
         window.location.href = instance.url;
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to start instance';
-      alert(`Error: ${errorMessage}`);
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setActionLoading(false);
     }
@@ -79,32 +79,61 @@ const ChallengePage: React.FC = () => {
     try {
       setActionLoading(true);
       await stopInstance(activeInstance.id);
-      alert('✓ Instance stopped successfully');
+      showToast('Instance stopped successfully', 'success');
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to stop instance';
-      alert(`❌ Error: ${errorMessage}`);
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleSubmitFlag = async (flag: string) => {
-    if (!flagModalCtf) return;
+    if (!selectedChallenge) return;
+    
+    // Check if already solved
+    const isSolved = user?.solvedCtf?.includes(selectedChallenge.id);
+    if (isSolved) {
+      showToast('You have already solved this challenge!', 'info');
+      return;
+    }
+    
     try {
       setActionLoading(true);
-      const result = await submitFlag(flagModalCtf.id, flag);
-      alert(`🎉 ${result.message}`);
-      setFlagModalCtf(null);
+      const result = await submitFlag(selectedChallenge.id, flag);
+      
+      if (result.success) {
+        showToast(result.message || 'Flag submitted successfully!', 'success');
+        
+        // Update user data in localStorage immediately
+        if (user) {
+          const updatedUser = {
+            ...user,
+            solvedCtf: [...user.solvedCtf, selectedChallenge.id],
+            numberOfSolvedCtf: (user.numberOfSolvedCtf || 0) + 1,
+          };
+          
+          // Update localStorage and refresh context
+          const authService = await import('../services/authService');
+          authService.default.updateUser(updatedUser);
+          refreshUser();
+        }
+        
+        // Close modal
+        setSelectedChallenge(null);
+      } else {
+        showToast(result.message || 'Incorrect flag', 'error');
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Wrong flag';
-      alert(`❌ ${errorMessage}`);
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const solvedCtfIds: string[] = [];
+  // Get solved CTF IDs from user
+  const solvedCtfIds: string[] = user?.solvedCtf || [];
 
   const filteredCtfs = ctfs.filter((ctf) => {
     const categoryMatch =
@@ -142,6 +171,13 @@ const ChallengePage: React.FC = () => {
       <div className="page-header">
         <h1>CTF Challenges</h1>
         <p>Test your skills across various cybersecurity challenges</p>
+        {user && (
+          <div className="user-stats">
+            <span className="stat-badge">
+              🏆 {user.numberOfSolvedCtf || 0} / {ctfs.length} Solved
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="page-content">
@@ -248,19 +284,36 @@ const ChallengePage: React.FC = () => {
                 <p>No challenges found with the selected filters</p>
               </div>
             ) : (
-              filteredCtfs.map((ctf) => (
-                <ChallengeCard
-                  key={ctf.id}
-                  challenge={ctf}
-                  onLaunchClick={handleLaunchClick}
-                  onSubmitFlag={(ctfId) => setFlagModalCtf({ id: ctfId, name: ctf.name })}
-                  hasActiveInstance={!!activeInstance && activeInstance.ctfId !== ctf.id}
-                />
-              ))
+              filteredCtfs.map((ctf) => {
+                const isSolved = solvedCtfIds.includes(ctf.id);
+                return (
+                  <ChallengeCard
+                    key={ctf.id}
+                    challenge={ctf}
+                    onClick={() => setSelectedChallenge(ctf)}
+                    isSolved={isSolved}
+                  />
+                );
+              })
             )}
           </div>
         </div>
       </div>
+
+      {/* Challenge Detail Modal */}
+      {selectedChallenge && (
+        <ChallengeModal
+          challenge={selectedChallenge}
+          isOpen={!!selectedChallenge}
+          onClose={() => setSelectedChallenge(null)}
+          onLaunchInstance={handleLaunchClick}
+          onSubmitFlag={handleSubmitFlag}
+          activeInstance={activeInstance && activeInstance.ctfId === selectedChallenge.id ? activeInstance : null}
+          onStopInstance={handleStopInstance}
+          isLoading={actionLoading}
+          isSolved={solvedCtfIds.includes(selectedChallenge.id)}
+        />
+      )}
 
       {/* Launch Instance Modal */}
       {launchModalCtf && (
@@ -337,15 +390,7 @@ const ChallengePage: React.FC = () => {
         </Modal>
       )}
 
-      {flagModalCtf && (
-        <FlagSubmitModal
-          ctfName={flagModalCtf.name}
-          onSubmit={handleSubmitFlag}
-          onClose={() => setFlagModalCtf(null)}
-        />
-      )}
-
-      {actionLoading && !launchModalCtf && (
+      {actionLoading && !launchModalCtf && !selectedChallenge && (
         <div className="loading-overlay">
           <div className="loading-card">
             <div className="spinner"></div>

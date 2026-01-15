@@ -32,7 +32,6 @@
 
 .navbar-menu a {
   text-decoration: none;
-  color: rgb(241, 239, 239); /* CHANGED: White instead of var(--text-secondary) */
   font-weight: 500;
   padding: 0.4rem 0.75rem;
   border-radius: 6px;
@@ -53,20 +52,20 @@
 .btn-login,
 .btn-register,
 .btn-logout {
-  padding: 0.45rem 1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid transparent;
   cursor: pointer;
-  position: relative;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn-login,
 .btn-register {
-  color: white; /* CHANGED: White text */
+  color: white;
   border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
 }
@@ -74,16 +73,31 @@
 .btn-login:hover,
 .btn-register:hover {
   background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-register {
+  background: white;
+  color: #4385ef;
+  border-color: white;
+}
+
+.btn-register:hover {
+  background: #f3f4f6;
+  color: #4385ef;
 }
 
 .btn-logout {
   color: white;
   border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(203, 10, 10, 0.814);
+  background: rgba(239, 68, 68, 0.8);
 }
 
 .btn-logout:hover {
-  background: rgba(220, 38, 38, 0.3);
+  background: rgba(220, 38, 38, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Navbar Button Loading Spinner */
@@ -97,11 +111,8 @@
 .btn-register.btn-loading::after,
 .btn-logout.btn-loading::after {
   content: '';
-  position: absolute;
   width: 14px;
   height: 14px;
-  top: 50%;
-  left: 50%;
   margin-left: -7px;
   margin-top: -7px;
   border: 2px solid rgba(255, 255, 255, 0.3);

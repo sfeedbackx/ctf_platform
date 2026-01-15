@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useToast } from '../common/ToastContainer';
+import { getErrorMessage } from '../../utils/errorHandler';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import './Register.css';
@@ -9,15 +11,16 @@ import { useAuth } from '../../context/AuthContext';
 
 const Register: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
   useEffect(() => {
     // If user is already logged in, don't let them stay here
     if (isAuthenticated) {
@@ -31,15 +34,14 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      showToast('Passwords do not match', 'error');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      showToast('Password must be at least 6 characters', 'error');
       return;
     }
 
@@ -51,24 +53,21 @@ const Register: React.FC = () => {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
       });
-      navigate('/login', {
-        state: { message: 'Registration successful! Please login.' },
-      });
+      showToast('Registration successful! Please login.', 'success');
+      navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // ... rest JSX unchanged
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h1>🚩 Join CTF Platform</h1>
         <p className="auth-subtitle">Create your account and start hacking</p>
-
-        {error && <div className="alert alert-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <Input

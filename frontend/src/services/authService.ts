@@ -68,6 +68,11 @@ export const authService = {
     const raw = localStorage.getItem('user');
     return raw ? JSON.parse(raw) : null;
   },
+
+  // ================= UPDATE USER =================
+  updateUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+  },
 };
 
 export default authService;

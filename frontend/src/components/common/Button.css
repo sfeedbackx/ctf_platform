@@ -1,19 +1,26 @@
-/* Button */
+/* Button Base Styles */
 .btn {
-  padding: 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   border: none;
   font-size: 0.95rem;
-  background: var(--primary);
-  color: white;
   position: relative;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn:disabled {
@@ -21,23 +28,58 @@
   cursor: not-allowed;
 }
 
-/* Button Loading Spinner */
-.btn-loading {
-  position: relative;
-  color: transparent !important;
+/* Button Variants */
+.btn-primary {
+  background: #6b73ff;
+  color: white;
 }
 
-.btn-loading::after {
-  content: '';
-  position: absolute;
+.btn-primary:hover:not(:disabled) {
+  background: #5860e6;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+/* Button Sizes */
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-medium {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+}
+
+/* Button Loading Spinner */
+.spinner {
   width: 16px;
   height: 16px;
-  top: 50%;
-  left: 50%;
-  margin-left: -8px;
-  margin-top: -8px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #0066ff;
+  border-top-color: white;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

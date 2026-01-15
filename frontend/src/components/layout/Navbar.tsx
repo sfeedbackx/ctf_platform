@@ -1,14 +1,17 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../common/ToastContainer';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    showToast('Logged out successfully', 'success');
     navigate('/login');
   };
 
@@ -24,9 +27,6 @@ const Navbar: React.FC = () => {
             <>
               <li>
                 <NavLink to="/challenges">Challenges</NavLink>
-              </li>
-              <li>
-                <NavLink to="/scoreboard">Scoreboard</NavLink>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout">

@@ -5,7 +5,8 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext'; // ✅ Updated import
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './components/common/ToastContainer';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -73,7 +74,9 @@ const App: React.FC = () => {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );

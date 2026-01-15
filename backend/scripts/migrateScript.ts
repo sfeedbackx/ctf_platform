@@ -63,6 +63,30 @@ ctfChallenges.push({
   hints: ['Hint 1: The server talks to itself. What happens when you make it ask the right questions?',
     'Hint 2: Speed beats logic. Sometimes clicking faster than the server can think pays off.'
   ],
+},
+{
+  name: 'Steganography_basics',
+  withSite: false,
+  //containersConfig: containersConfig,
+  description: 'Do you know what is steganography ?',
+  difficulty: ctfDifficulty.EASY,
+  flag: 'cll{Fqj1Lkirsyi2sLn0O7aX1NIoYZggKuvy8MEfx1sU/PI=}',
+  type: 'FORENSICS',
+  resources: ['127.0.0.1:6650'],
+  hints: [],
+},
+{
+  name: 'STEGANOGRAPHY2',
+  withSite: false,
+  //containersConfig: containersConfig,
+  description: "So you know Steganography basics but didn't we deserve 20 ?",
+  difficulty: ctfDifficulty.MID,
+  flag: 'cll{iVwbTtAoYXciA486sEXwGMT1geaJOym3pIsEGeQQQNg=}',
+  type: 'FORENSICS',
+  resources: ['127.0.0.1:6600'],
+  hints: ['Hint 1 : i can see the password there ! ', 
+    'Hint 1 : really! we deserve 20'
+  ],
 });
 
 const cleanCtfCollection = async () => {

@@ -23,6 +23,26 @@
   font-size: 1.1rem;
 }
 
+.user-stats {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  background: linear-gradient(135deg, #6b73ff 0%, #5860e6 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(107, 115, 255, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .page-content {
   display: flex;
   gap: 2rem;

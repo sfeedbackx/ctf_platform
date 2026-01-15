@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { challengeService } from '../../services/challengeService';
 import type { Ctf, CtfDifficulty, CtfType } from '../../types/ctf';
 import ChallengeCard from './ChallengeCard';
+import ChallengeModal from './ChallengeModal';
 import './ChallengeList.css';
 
 const ChallengeList: React.FC = () => {
@@ -9,6 +10,7 @@ const ChallengeList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('');
   const [difficulty, setDifficulty] = useState('');
+  const [selectedChallenge, setSelectedChallenge] = useState<Ctf | null>(null);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -29,6 +31,7 @@ const ChallengeList: React.FC = () => {
           hints: challenge.hints || [],
           resources: challenge.resources || [],
           withSite: challenge.withSite ?? false,
+          solved: challenge.solved ?? false,
         }));
 
         setChallenges(mappedData);
@@ -42,6 +45,14 @@ const ChallengeList: React.FC = () => {
     fetchChallenges();
   }, [category, difficulty]);
 
+  const handleChallengeClick = (challenge: Ctf) => {
+    setSelectedChallenge(challenge);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedChallenge(null);
+  };
+
   if (loading) {
     return <div className="loading">Loading challenges...</div>;
   }
@@ -53,7 +64,7 @@ const ChallengeList: React.FC = () => {
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="">All Categories</option>
           <option value="WEB_EXPLOIT">Web</option>
-          <option value="BE">Backend</option>
+          <option value="FORENSICS">Forensics</option>
           <option value="OTHER">Other</option>
         </select>
 
@@ -74,10 +85,23 @@ const ChallengeList: React.FC = () => {
           <p className="no-challenges">No challenges found</p>
         ) : (
           challenges.map((challenge) => (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
+            <ChallengeCard 
+              key={challenge.id} 
+              challenge={challenge}
+              onClick={() => handleChallengeClick(challenge)}
+              isSolved={challenge.solved}
+            />
           ))
         )}
       </div>
+
+      {/* Challenge Modal */}
+      {selectedChallenge && (
+        <ChallengeModal
+          challenge={selectedChallenge}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

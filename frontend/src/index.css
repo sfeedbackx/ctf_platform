@@ -51,52 +51,58 @@ body {
 }
 
 /* ===== BUTTONS ===== */
-.btn {
-  padding: 0.6rem 1.25rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  cursor: pointer;
-  transition: var(--transition);
+button {
+  font-family: 'Inter', sans-serif;
 }
 
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
+.btn-primary:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled) {
+  background: #5860e6;
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--primary);
-  border-color: var(--primary);
+  color: #6b73ff;
+  border: 2px solid #6b73ff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.btn-outline:hover {
-  background: var(--bg-tertiary);
+.btn-outline:hover:not(:disabled) {
+  background: #f0f1ff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ===== INPUTS ===== */
 .input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
 select {
   width: 100%;
-  padding: 0.6rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
 }
 
 .input:focus,
+input:focus,
 select:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: #6b73ff;
+  box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
 }
 
 /* ===== SCROLLBAR ===== */

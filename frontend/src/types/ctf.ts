@@ -16,6 +16,7 @@ export interface Ctf {
   hints: string[];
   resources: string[];
   withSite: boolean;
+  solved?: boolean;
 }
 
 export interface CtfInstance {
