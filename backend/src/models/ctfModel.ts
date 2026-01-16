@@ -14,7 +14,7 @@ const ctfSchema = new Schema(
       type: String,
       trim: true,
       required: [true, 'type required'],
-      enum: ['WEB_EXPLOIT', 'BE', 'OTHER'],
+      enum: ['WEB_EXPLOIT', 'BE', 'OTHER', 'FORENSICS'],
     },
 
     withSite: {
@@ -31,7 +31,7 @@ const ctfSchema = new Schema(
       type: String,
       trim: true,
       required: [true, 'difficulty required'],
-      enum: ['ESAY', 'MID', 'HARD'],
+      enum: ['EASY', 'MID', 'HARD'],
     },
     hints: [
       {

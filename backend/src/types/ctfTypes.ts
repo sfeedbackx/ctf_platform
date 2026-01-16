@@ -24,7 +24,7 @@ interface IMongoDocument extends ITimestamps {
 export interface Ictf {
   name: string;
   description?: string | undefined;
-  type: 'WEB_EXPLOIT' | 'BE' | 'OTHER';
+  type: 'WEB_EXPLOIT' | 'BE' | 'OTHER' | 'FORENSICS';
   resources: string[];
   withSite: boolean;
   difficulty: ctfDifficulty;
