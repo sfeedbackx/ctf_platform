@@ -37,7 +37,7 @@ RUN npm ci --omit=dev && \
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
 
-
+#Copy tls certificate
 COPY src/utils/ca.pem src/utils/cert.pem ./dist/utils/
 
 # Change ownership to non-root user

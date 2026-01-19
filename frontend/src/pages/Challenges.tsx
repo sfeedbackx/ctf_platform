@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useCtf } from '../hooks/useCtf';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../components/common/ToastContainer';
 import { getErrorMessage } from '../utils/errorHandler';
 import ChallengeCard from '../components/challenges/ChallengeCard';
 import { ActiveInstanceBanner } from '../components/ActiveInstanceBanner';
@@ -9,7 +7,17 @@ import Modal from '../components/common/Modal';
 import { ChallengeModal } from '../components/challenges/ChallengeModal';
 import './Challenges.css';
 import type { Ctf } from '../types/ctf';
+import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 
+/**
+ * Challenges page component.
+ *
+ * Loading State Management:
+ * - Uses loading state from useCtf hook to show loading indicator during initial fetch
+ * - actionLoading manages loading state for user actions (launch, stop, submit)
+ * - Loading indicators provide clear feedback to users during async operations
+ */
 const ChallengePage: React.FC = () => {
   const { user, refreshUser } = useAuth();
   const { showToast } = useToast();
@@ -17,6 +25,7 @@ const ChallengePage: React.FC = () => {
     ctfs,
     activeInstance,
     error,
+    loading,
     startInstance,
     stopInstance,
     submitFlag,
@@ -75,7 +84,6 @@ const ChallengePage: React.FC = () => {
   const handleSubmitFlag = async (flag: string) => {
     if (!selectedChallenge) return;
 
-    // Check if already solved
     const isSolved = user?.solvedCtf?.includes(selectedChallenge.id);
     if (isSolved) {
       showToast('You have already solved this challenge!', 'info');
@@ -89,7 +97,6 @@ const ChallengePage: React.FC = () => {
       if (result.success) {
         showToast(result.message || 'Flag submitted successfully!', 'success');
 
-        // Update user data in localStorage immediately
         if (user) {
           const updatedUser = {
             ...user,
@@ -97,13 +104,11 @@ const ChallengePage: React.FC = () => {
             numberOfSolvedCtf: (user.numberOfSolvedCtf || 0) + 1,
           };
 
-          // Update localStorage and refresh context
           const authService = await import('../services/authService');
           authService.default.updateUser(updatedUser);
           refreshUser();
         }
 
-        // Close modal
         setSelectedChallenge(null);
       } else {
         showToast(result.message || 'Incorrect flag', 'error');
@@ -116,7 +121,6 @@ const ChallengePage: React.FC = () => {
     }
   };
 
-  // Get solved CTF IDs from user
   const solvedCtfIds: string[] = user?.solvedCtf || [];
 
   const filteredCtfs = ctfs.filter((ctf) => {
@@ -127,11 +131,25 @@ const ChallengePage: React.FC = () => {
     return categoryMatch && difficultyMatch;
   });
 
+  if (loading) {
+    return (
+      <div className="challenges-page">
+        <div className="loading-container">
+          <div
+            className="spinner"
+            style={{ width: '48px', height: '48px', margin: '0 auto' }}
+          ></div>
+          <p>Loading challenges...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="challenges-page">
         <div className="error-container">
-          <h2>❌ Error Loading Challenges</h2>
+          <h2>Error Loading Challenges</h2>
           <p>{error}</p>
           <button onClick={() => window.location.reload()}>Retry</button>
         </div>
@@ -147,7 +165,7 @@ const ChallengePage: React.FC = () => {
         {user && (
           <div className="user-stats">
             <span className="stat-badge">
-              🏆 {user.numberOfSolvedCtf || 0} / {ctfs.length} Solved
+              {user.numberOfSolvedCtf || 0} / {ctfs.length} Solved
             </span>
           </div>
         )}
@@ -201,10 +219,12 @@ const ChallengePage: React.FC = () => {
         </div>
 
         <div className="main-content">
-          {activeInstance && (
+          {/* Only show banner if instance exists and has valid URL to prevent showing stale data on errors */}
+          {activeInstance && activeInstance.url && (
             <ActiveInstanceBanner
               instance={activeInstance}
               onStop={handleStopInstance}
+              actionLoading={actionLoading}
             />
           )}
 
@@ -285,7 +305,9 @@ const ChallengePage: React.FC = () => {
           onLaunchInstance={handleLaunchClick}
           onSubmitFlag={handleSubmitFlag}
           activeInstance={
-            activeInstance && activeInstance.ctfId === selectedChallenge.id
+            activeInstance &&
+            activeInstance.ctfId === selectedChallenge.id &&
+            activeInstance.url
               ? activeInstance
               : null
           }
@@ -312,18 +334,9 @@ const ChallengePage: React.FC = () => {
                 Launch a new instance for{' '}
                 <strong>{launchModalCtf?.name}</strong>?
               </p>
-              <p
-                style={{
-                  color: 'var(--error)',
-                  fontSize: '0.9rem',
-                  margin: '1rem 0',
-                }}
-              >
-                This will create a new container. Existing instances will be
-                unaffected.
-              </p>
               <div
                 style={{
+                  marginTop: '2rem',
                   display: 'flex',
                   gap: '1rem',
                   justifyContent: 'flex-end',
@@ -362,10 +375,7 @@ const ChallengePage: React.FC = () => {
             </div>
           ) : (
             <div>
-              <p>
-                Instance launched successfully!{' '}
-                <strong>Do not close this tab.</strong>
-              </p>
+              <p>Instance launched successfully! </p>
               <div style={{ marginTop: '1rem' }}>
                 <a
                   href={instanceUrl}

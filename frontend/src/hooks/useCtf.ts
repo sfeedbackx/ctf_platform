@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react';
 import { ctfService } from '../services/ctfService';
 import type { Ctf, CtfInstance } from '../types/ctf';
 
+/**
+ * Custom hook for managing CTF challenges and instances.
+ *
+ * Error Handling Best Practices:
+ * - Active instance is cleared (set to null) when fetch fails to prevent showing stale data
+ * - Errors are set in state and can be displayed to users
+ * - Loading states are properly managed for better UX feedback
+ *
+ * @returns Object containing CTF data, active instance, loading/error states, and action functions
+ */
 export const useCtf = () => {
   const [ctfs, setCtfs] = useState<Ctf[]>([]);
   const [activeInstance, setActiveInstance] = useState<CtfInstance | null>(
@@ -24,12 +34,18 @@ export const useCtf = () => {
     }
   };
 
+  /**
+   * Fetches the active instance for the current user.
+   * Clears activeInstance on error to prevent displaying stale/invalid instance data.
+   */
   const fetchActiveInstance = async () => {
     try {
       const instance = await ctfService.getActiveInstance();
       setActiveInstance(instance);
+      setError(null);
     } catch (err) {
       console.error('Failed to fetch active instance:', err);
+      setActiveInstance(null);
     }
   };
 

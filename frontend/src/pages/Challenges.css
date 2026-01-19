@@ -96,13 +96,13 @@
 }
 
 .sidebar-top-select select:hover {
-  border-color: #0066ff;
+  border-color: var(--primary);
 }
 
 .sidebar-top-select select:focus {
   outline: none;
-  border-color: #0066ff;
-  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
 }
 
 .category-list {
@@ -127,13 +127,13 @@
 .category-item:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
-  border-color: #0066ff;
+  border-color: var(--primary);
 }
 
 .category-item.active {
   background: var(--primary);
   color: white;
-  border-color: #0066ff;
+  border-color: var(--primary);
   font-weight: 600;
 }
 
@@ -176,7 +176,7 @@
 .radio-option input[type="radio"] {
   width: 16px;
   height: 16px;
-  accent-color: #0066ff;
+  accent-color: var(--primary);
   cursor: pointer;
 }
 
@@ -191,7 +191,7 @@
 }
 
 .radio-option input[type="radio"]:checked+span {
-  color: #0066ff;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -235,8 +235,8 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: #0066ff;
-  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
 }
 
 /* Stats Cards */
@@ -270,8 +270,8 @@
 
 .stat-card:hover {
   transform: translateY(-2px);
-  border-color: #0066ff;
-  box-shadow: 0 8px 24px rgba(0, 102, 255, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(107, 115, 255, 0.15);
 }
 
 .stat-value {
@@ -307,7 +307,7 @@
 
 .spinner {
   border: 4px solid var(--border);
-  border-top: 4px solid #0066ff;
+  border-top: 4px solid var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

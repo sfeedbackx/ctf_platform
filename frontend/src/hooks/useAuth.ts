@@ -1,6 +1,7 @@
-// src/hooks/useAuth.ts - CORRECT PATH
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import { createContext, useContext } from 'react';
+import type { AuthContextType } from '../types/authTypes';
+
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
