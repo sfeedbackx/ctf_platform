@@ -71,7 +71,7 @@
 }
 
 .challenge-modal-category {
-  background: #6b73ff;
+  background: var(--primary);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -88,7 +88,7 @@
 }
 
 .challenge-modal-solved-badge {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -172,7 +172,7 @@
 
 .challenge-modal-hints-list li {
   background: #f9fafb;
-  border-left: 3px solid #6b73ff;
+  border-left: 3px solid var(--primary);
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
   border-radius: 4px;
@@ -204,12 +204,12 @@
 }
 
 .challenge-modal-resource-link:hover {
-  color: #059669;
+  color: var(--success-dark);
   text-decoration: underline;
 }
 
 .challenge-modal-launch-btn {
-  background: #6b73ff;
+  background: var(--primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -222,7 +222,7 @@
 }
 
 .challenge-modal-launch-btn:hover:not(:disabled) {
-  background: #5860e6;
+  background: var(--primary-dark);
 }
 
 .challenge-modal-launch-btn:disabled {
@@ -232,8 +232,8 @@
 }
 
 .challenge-modal-instance-active {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 2px solid #3b82f6;
+  background: linear-gradient(135deg, rgba(107, 115, 255, 0.05) 0%, rgba(107, 115, 255, 0.1) 100%);
+  border: 2px solid var(--info);
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -243,7 +243,7 @@
 }
 
 .instance-status-pending {
-  color: #f59e0b;
+  color: var(--warning);
   font-weight: 600;
   font-size: 1rem;
   display: flex;
@@ -273,14 +273,14 @@
 }
 
 .instance-link a {
-  color: #3b82f6;
+  color: var(--info);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease;
 }
 
 .instance-link a:hover {
-  color: #2563eb;
+  color: var(--info-dark);
   text-decoration: underline;
 }
 
@@ -290,13 +290,13 @@
 }
 
 .instance-timer strong {
-  color: #ef4444;
+  color: var(--error);
   font-weight: 700;
 }
 
 .challenge-modal-stop-btn {
   width: 100%;
-  background: #ef4444;
+  background: var(--error);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -308,7 +308,7 @@
 }
 
 .challenge-modal-stop-btn:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--error-dark);
 }
 
 .challenge-modal-stop-btn:disabled {
@@ -320,8 +320,8 @@
 .challenge-modal-warning {
   margin-top: 0.75rem;
   padding: 0.75rem;
-  background: #fef3c7;
-  border-left: 3px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid var(--warning);
   border-radius: 4px;
   color: #92400e;
   font-size: 0.875rem;
@@ -344,7 +344,7 @@
 
 .challenge-modal-flag-input:focus {
   outline: none;
-  border-color: #6b73ff;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
 }
 
@@ -354,7 +354,7 @@
 }
 
 .challenge-modal-submit-btn {
-  background: #10b981;
+  background: var(--success);
   color: white;
   border: none;
   padding: 0.75rem 2rem;
@@ -367,7 +367,7 @@
 }
 
 .challenge-modal-submit-btn:hover:not(:disabled) {
-  background: #059669;
+  background: var(--success-dark);
 }
 
 .challenge-modal-submit-btn:disabled {

@@ -28,17 +28,11 @@ const Leaderboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getMedalEmoji = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return '🥇';
-      case 2:
-        return '🥈';
-      case 3:
-        return '🥉';
-      default:
-        return rank;
+  const getRankDisplay = (rank: number) => {
+    if (rank <= 3) {
+      return `#${rank}`;
     }
+    return rank;
   };
 
   if (loading) {
@@ -47,7 +41,7 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className="leaderboard-container">
-      <h1>🏆 Leaderboard</h1>
+      <h1>Leaderboard</h1>
 
       <div className="leaderboard-table">
         <table>
@@ -66,7 +60,7 @@ const Leaderboard: React.FC = () => {
                 key={entry.rank}
                 className={entry.rank <= 3 ? 'top-three' : ''}
               >
-                <td className="rank-cell">{getMedalEmoji(entry.rank)}</td>
+                <td className="rank-cell">{getRankDisplay(entry.rank)}</td>
                 <td className="username-cell">{entry.username}</td>
                 <td>{entry.teamName || '-'}</td>
                 <td>{entry.solvedCount}</td>

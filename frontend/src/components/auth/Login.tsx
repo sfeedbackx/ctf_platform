@@ -1,12 +1,12 @@
-// src/components/auth/Login.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { useToast } from '../common/ToastContainer';
 import { getErrorMessage } from '../../utils/errorHandler';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import './Login.css';
+import { ROUTES } from '../../utils/constants';
+import { useToast } from '../../hooks/useToast';
 
 const Login: React.FC = () => {
   const { login, isAuthenticated } = useAuth();
@@ -16,7 +16,11 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (isAuthenticated) navigate('/challenges');
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(ROUTES.CHALLENGES);
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +29,10 @@ const Login: React.FC = () => {
       const credentials = { email, password };
       await login(credentials);
       showToast('Login successful! Welcome back.', 'success');
-      navigate('/challenges');
+      navigate(ROUTES.CHALLENGES);
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        const errorMessage = getErrorMessage(err);
-        showToast(errorMessage, 'error');
-      }
+      const errorMessage = getErrorMessage(err);
+      showToast(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -67,7 +69,7 @@ const Login: React.FC = () => {
         </form>
 
         <p className="auth-footer">
-          Don't have an account? <Link to="/register">Register here</Link>
+          Don't have an account? <Link to={ROUTES.REGISTER}>Register here</Link>
         </p>
       </div>
     </div>

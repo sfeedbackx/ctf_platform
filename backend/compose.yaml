@@ -55,8 +55,8 @@ services:
       target: production
     container_name: ctf-backend
     restart: unless-stopped
-    ports:
-      - "${PORT:-3000}:3000"
+ #   ports:
+  #    - "${PORT:-3000}:3000"
     volumes:
       - ./src/utils/ca.pem:/app/dist/utils/key.pem:ro
     env_file:
@@ -68,8 +68,6 @@ services:
         condition: service_started
       mongo:
         condition: service_healthy
-
-
 networks:
   ctf-network:
     driver: bridge

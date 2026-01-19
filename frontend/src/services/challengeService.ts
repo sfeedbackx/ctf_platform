@@ -8,12 +8,13 @@ export type ChallengeType =
   | 'REVERSE';
 export type Difficulty = 'EASY' | 'MID' | 'HARD';
 
-export interface Challenge {
-  _id: string;
+export type Challenge = {
+  id: string;
   name: string;
   type: ChallengeType;
   description: string;
   difficulty: Difficulty;
+  resources: string[];
   points: number;
   solves: number;
   hints?: string[];
@@ -21,7 +22,7 @@ export interface Challenge {
   solved?: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export const challengeService = {
   async getAllChallenges(

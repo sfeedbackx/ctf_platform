@@ -5,9 +5,14 @@ import './ActiveInstanceBanner.css';
 interface Props {
   instance: CtfInstance;
   onStop: () => void;
+  actionLoading: boolean;
 }
 
-export const ActiveInstanceBanner: React.FC<Props> = ({ instance, onStop }) => {
+export const ActiveInstanceBanner: React.FC<Props> = ({
+  instance,
+  onStop,
+  actionLoading,
+}) => {
   const [timeLeft, setTimeLeft] = useState('');
 
   useEffect(() => {
@@ -35,19 +40,18 @@ export const ActiveInstanceBanner: React.FC<Props> = ({ instance, onStop }) => {
         <h3>Active Challenge Instance</h3>
         <p>
           {instance.status === 'PENDING' ? (
-            <span className="pulse">⏳ Starting instance...</span>
+            <span className="pulse">Starting instance...</span>
           ) : (
-            <>
-              🔗{' '}
-              <a href={instance.url} target="_blank" rel="noopener noreferrer">
-                Open Challenge
-              </a>
-            </>
+            <a href={instance.url} target="_blank" rel="noopener noreferrer">
+              Open Challenge
+            </a>
           )}
         </p>
-        <p className="timer">⏱️ Expires in: {timeLeft}</p>
+        <p className="timer">Expires in: {timeLeft}</p>
       </div>
-      <button onClick={onStop}>Stop Instance</button>
+      <button disabled={actionLoading} onClick={onStop}>
+        {actionLoading ? 'stoping instance ...' : 'stop instance'}
+      </button>
     </div>
   );
 };

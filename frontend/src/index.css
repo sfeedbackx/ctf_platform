@@ -6,9 +6,21 @@
   box-sizing: border-box;
 }
 
+/**
+ * CSS Variables for consistent theming across the application.
+ * 
+ * Color Consistency Guidelines:
+ * - Use CSS variables instead of hard-coded colors
+ * - Primary colors: --primary, --primary-dark, --primary-light
+ * - Semantic colors: --success, --error, --warning, --info (with -dark variants)
+ * - Background/text colors: --bg-*, --text-*
+ * 
+ * This ensures consistent colors and easier theme customization.
+ */
 :root {
   --primary: #6b73ff;
   --primary-dark: #5860e6;
+  --primary-light: #f0f1ff;
 
   --bg-primary: #f6f7fb;
   --bg-secondary: #ffffff;
@@ -21,6 +33,14 @@
 
   --border: #e5e7eb;
   --border-hover: #d1d5db;
+
+  --success: #10b981;
+  --success-dark: #059669;
+  --error: #ef4444;
+  --error-dark: #dc2626;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --info-dark: #2563eb;
 
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
@@ -57,13 +77,13 @@ button {
 
 .btn-primary:hover:not(:disabled),
 button[type="submit"]:hover:not(:disabled) {
-  background: #5860e6;
+  background: var(--primary-dark);
 }
 
 .btn-outline {
   background: transparent;
-  color: #6b73ff;
-  border: 2px solid #6b73ff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-size: 0.95rem;
@@ -73,7 +93,7 @@ button[type="submit"]:hover:not(:disabled) {
 }
 
 .btn-outline:hover:not(:disabled) {
-  background: #f0f1ff;
+  background: var(--primary-light);
 }
 
 button:disabled {
@@ -101,7 +121,7 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #6b73ff;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
 }
 

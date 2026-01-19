@@ -14,7 +14,7 @@ export const Toast: React.FC<ToastProps> = ({
   message,
   type,
   onClose,
-  duration = 5000,
+  duration = 2500,
 }) => {
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -1,10 +1,12 @@
 // src/pages/Profile.tsx
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import {
   submissionService,
   type Submission,
 } from '../services/submissionService';
+import { ROUTES } from '../utils/constants';
 import './Profile.css';
 
 const Profile: React.FC = () => {
@@ -51,9 +53,9 @@ const Profile: React.FC = () => {
           <h1 className="text-2xl mb-4">Profile</h1>
           <p>
             No user data found.{' '}
-            <a href="/login" className="text-blue-400 hover:underline">
+            <Link to={ROUTES.LOGIN} className="text-blue-400 hover:underline">
               Login here
-            </a>
+            </Link>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { ROUTES } from '../utils/constants';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -15,14 +16,14 @@ const Home: React.FC = () => {
         </p>
         {!isAuthenticated && (
           <div className="hero-actions">
-            <Link to="/register" className="btn btn-primary btn-large">
+            <Link to={ROUTES.REGISTER} className="btn btn-primary btn-large">
               Get Started
             </Link>
           </div>
         )}
         {isAuthenticated && (
           <div className="hero-actions">
-            <Link to="/challenges" className="btn btn-primary btn-large">
+            <Link to={ROUTES.CHALLENGES} className="btn btn-primary btn-large">
               View Challenges
             </Link>
           </div>

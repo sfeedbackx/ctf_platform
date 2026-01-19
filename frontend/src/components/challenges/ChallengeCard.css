@@ -1,5 +1,7 @@
 /* ===== Challenge Card Styling ===== */
 .challenge-card {
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -7,6 +9,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  justify-content: space-around;
 }
 
 .challenge-card:hover {
@@ -53,9 +56,12 @@
 }
 
 @keyframes solvedPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
   }
+
   50% {
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
   }
@@ -92,14 +98,14 @@
   color: white;
 }
 
-.challenge-difficulty.green { 
+.challenge-difficulty.green {
   background-color: #10b981;
 }
 
-.challenge-difficulty.orange { 
+.challenge-difficulty.orange {
   background-color: #f97316;
 }
 
-.challenge-difficulty.red { 
+.challenge-difficulty.red {
   background-color: #ef4444;
 }

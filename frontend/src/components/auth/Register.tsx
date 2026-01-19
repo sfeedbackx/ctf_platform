@@ -1,13 +1,13 @@
-// Register.tsx - FULLY FIXED
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
-import { useToast } from '../common/ToastContainer';
 import { getErrorMessage } from '../../utils/errorHandler';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import './Register.css';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
+import { ROUTES } from '../../utils/constants';
+import { useToast } from '../../hooks/useToast';
 
 const Register: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -22,9 +22,8 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If user is already logged in, don't let them stay here
     if (isAuthenticated) {
-      navigate('/challenges');
+      navigate(ROUTES.CHALLENGES);
     }
   }, [isAuthenticated, navigate]);
 
@@ -54,8 +53,8 @@ const Register: React.FC = () => {
         confirmPassword: formData.confirmPassword,
       });
       showToast('Registration successful! Please login.', 'success');
-      navigate('/login');
-    } catch (err: any) {
+      navigate(ROUTES.LOGIN);
+    } catch (err: unknown) {
       const errorMessage = getErrorMessage(err);
       showToast(errorMessage, 'error');
     } finally {
@@ -103,7 +102,7 @@ const Register: React.FC = () => {
         </form>
 
         <p className="auth-footer">
-          Already have an account? <Link to="/login">Login here</Link>
+          Already have an account? <Link to={ROUTES.LOGIN}>Login here</Link>
         </p>
       </div>
     </div>
