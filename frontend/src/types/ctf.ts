@@ -7,7 +7,7 @@ export type InstanceState =
   | 'FAILED'
   | 'TERMINATED';
 
-export interface Ctf {
+export type Ctf = {
   id: string;
   name: string;
   type: CtfType;
@@ -17,13 +17,13 @@ export interface Ctf {
   resources: string[];
   withSite: boolean;
   solved?: boolean;
-}
+};
 
-export interface CtfInstance {
+export type CtfInstance = {
   id: string;
   ctfId: string;
   userId: string;
   status: InstanceState;
   url?: string;
   expiresAt: Date;
-}
+};

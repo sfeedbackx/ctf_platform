@@ -1,4 +1,3 @@
-// src/components/challenges/ChallengeDetail.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { challengeService } from '../../services/challengeService';
@@ -7,6 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import './ChallengeDetail.css';
+import { getErrorMessage } from '../../utils/errorHandler';
+import { ROUTES } from '../../utils/constants';
 
 const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,19 +21,19 @@ const ChallengeDetail: React.FC = () => {
     text: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetchingChallenge, setFetchingChallenge] = useState(true);
 
   useEffect(() => {
     const fetchChallenge = async () => {
       if (!id) return;
 
       try {
-        // Fetch from API
-        const dataFromApi: any = await challengeService.getChallengeById(id);
+        setFetchingChallenge(true);
+        const dataFromApi = await challengeService.getChallengeById(id);
 
-        // Map API data to Ctf type
         const ctfChallenge: Ctf = {
           id: dataFromApi.id || id,
-          name: dataFromApi.name || dataFromApi.title || `Challenge ${id}`,
+          name: dataFromApi.name || `Challenge ${id}`,
           type: (dataFromApi.type as CtfType) || 'OTHER',
           description: dataFromApi.description || '',
           difficulty: (dataFromApi.difficulty as CtfDifficulty) || 'MID',
@@ -44,7 +45,9 @@ const ChallengeDetail: React.FC = () => {
         setChallenge(ctfChallenge);
       } catch (error) {
         console.error('Failed to fetch challenge:', error);
-        navigate('/challenges');
+        navigate(ROUTES.CHALLENGES);
+      } finally {
+        setFetchingChallenge(false);
       }
     };
 
@@ -62,19 +65,14 @@ const ChallengeDetail: React.FC = () => {
       const result = await challengeService.submitFlag(id, flag);
 
       if (result.correct) {
-        setMessage({ type: 'success', text: '🎉 Correct! Flag accepted!' });
+        setMessage({ type: 'success', text: 'Correct! Flag accepted!' });
         setFlag('');
-        await refreshUser();
+        refreshUser();
 
-        // Refresh challenge after submission
-        const updatedDataFromApi: any =
-          await challengeService.getChallengeById(id);
+        const updatedDataFromApi = await challengeService.getChallengeById(id);
         const updatedChallenge: Ctf = {
           id: updatedDataFromApi.id || id,
-          name:
-            updatedDataFromApi.name ||
-            updatedDataFromApi.title ||
-            `Challenge ${id}`,
+          name: updatedDataFromApi.name || `Challenge ${id}`,
           type: (updatedDataFromApi.type as CtfType) || 'OTHER',
           description: updatedDataFromApi.description || '',
           difficulty: (updatedDataFromApi.difficulty as CtfDifficulty) || 'MID',
@@ -86,17 +84,26 @@ const ChallengeDetail: React.FC = () => {
       } else {
         setMessage({ type: 'error', text: 'Incorrect flag. Try again!' });
       }
-    } catch (error: any) {
-      setMessage({
-        type: 'error',
-        text: error.response?.data?.error || 'Submission failed',
-      });
+    } catch (error: unknown) {
+      getErrorMessage(error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!challenge) return <div className="loading">Loading...</div>;
+  if (fetchingChallenge || !challenge) {
+    return (
+      <div className="challenge-detail">
+        <div className="loading-container">
+          <div
+            className="spinner"
+            style={{ width: '48px', height: '48px', margin: '0 auto' }}
+          ></div>
+          <p>Loading challenge...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="challenge-detail">
@@ -120,7 +127,7 @@ const ChallengeDetail: React.FC = () => {
 
         {challenge.hints.length > 0 && (
           <div className="challenge-hints">
-            <h3>💡 Hints</h3>
+            <h3>Hints</h3>
             <ul>
               {challenge.hints.map((hint, index) => (
                 <li key={index}>{hint}</li>
@@ -131,7 +138,7 @@ const ChallengeDetail: React.FC = () => {
 
         {challenge.resources.length > 0 && (
           <div className="challenge-resources">
-            <h3>📚 Resources</h3>
+            <h3>Resources</h3>
             <ul>
               {challenge.resources.map((res, index) => (
                 <li key={index}>{res}</li>

@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:80/api';
+import { API_BASE_URL } from '../utils/constants';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,7 +19,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// 🚫 DO NOT AUTO-LOGOUT ON EVERY 401
 api.interceptors.response.use(
   (response) => response,
   (error) => {

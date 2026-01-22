@@ -29,29 +29,25 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   const [showHints, setShowHints] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
 
-  // Timer for active instance
   useEffect(() => {
-    if (!activeInstance) {
-      setTimeLeft('');
-      return;
+    if (activeInstance) {
+      const timer = setInterval(() => {
+        const now = new Date().getTime();
+        const expiry = new Date(activeInstance.expiresAt).getTime();
+        const diff = expiry - now;
+
+        if (diff <= 0) {
+          setTimeLeft('EXPIRED');
+          clearInterval(timer);
+        } else {
+          const minutes = Math.floor(diff / 60000);
+          const seconds = Math.floor((diff % 60000) / 1000);
+          setTimeLeft(`${minutes}m ${seconds}s`);
+        }
+      }, 1000);
+
+      return () => clearInterval(timer);
     }
-
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const expiry = new Date(activeInstance.expiresAt).getTime();
-      const diff = expiry - now;
-
-      if (diff <= 0) {
-        setTimeLeft('EXPIRED');
-        clearInterval(timer);
-      } else {
-        const minutes = Math.floor(diff / 60000);
-        const seconds = Math.floor((diff % 60000) / 1000);
-        setTimeLeft(`${minutes}m ${seconds}s`);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
   }, [activeInstance]);
 
   if (!isOpen) return null;
@@ -146,12 +142,11 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                   <div className="instance-info">
                     {activeInstance.status === 'PENDING' ? (
                       <p className="instance-status-pending">
-                        <span className="pulse">⏳</span> Starting instance...
+                        <span className="pulse">Starting instance...</span>
                       </p>
                     ) : (
                       <>
                         <p className="instance-link">
-                          🔗{' '}
                           <a
                             href={activeInstance.url}
                             target="_blank"
@@ -161,7 +156,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                           </a>
                         </p>
                         <p className="instance-timer">
-                          ⏱️ Expires in: <strong>{timeLeft}</strong>
+                          Expires in: <strong>{timeLeft}</strong>
                         </p>
                       </>
                     )}
@@ -214,7 +209,6 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             <h3>Submit Flag</h3>
             {isSolved ? (
               <div className="challenge-modal-solved-message">
-                <div className="challenge-modal-solved-icon">🎉</div>
                 <p>Congratulations! You have already solved this challenge.</p>
               </div>
             ) : (

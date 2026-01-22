@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/common/ToastContainer';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -15,12 +15,13 @@ import Register from './components/auth/Register';
 import Challenges from './pages/Challenges';
 import ChallengeDetail from './components/challenges/ChallengeDetail';
 import './App.css';
+import { useAuth } from './hooks/useAuth';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import { ROUTES } from './utils/constants';
 
-// ✅ Fixed: Inside AuthProvider
 const AppContent: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { loading } = useAuth();
 
-  // ✅ Loading screen
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
@@ -29,24 +30,18 @@ const AppContent: React.FC = () => {
     );
   }
 
-  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
-    children,
-  }) => {
-    return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-  };
-
   return (
     <div className="app min-h-screen bg-gray-900 text-white">
       <Navbar />
       <main className="main-content flex-1 pb-16">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path={ROUTES.HOME} element={<Home />} />
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.REGISTER} element={<Register />} />
 
-          {/* ✅ PROTECTED CTF */}
+          {/*  PROTECTED CTF */}
           <Route
-            path="/challenges"
+            path={ROUTES.CHALLENGES}
             element={
               <ProtectedRoute>
                 <Challenges />
@@ -55,14 +50,14 @@ const AppContent: React.FC = () => {
           />
 
           <Route
-            path="/challenges/:id"
+            path={`${ROUTES.CHALLENGES}/:id`}
             element={
               <ProtectedRoute>
                 <ChallengeDetail />
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </main>
       <Footer />

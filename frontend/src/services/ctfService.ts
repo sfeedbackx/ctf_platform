@@ -1,15 +1,10 @@
 import type { Ctf, CtfInstance } from '../types/ctf';
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+import { API_BASE_URL } from '../utils/constants';
 
 export const ctfService = {
-  // =========================
-  // Get all CTFs (public)
-  // =========================
   async getAllCtfs(): Promise<Ctf[]> {
     const response = await fetch(`${API_BASE_URL}/ctfs`, {
-      credentials: 'include', // Send cookies
+      credentials: 'include',
     });
 
     if (!response.ok) {
@@ -22,9 +17,6 @@ export const ctfService = {
     return response.json();
   },
 
-  // =========================
-  // Get active instance
-  // =========================
   async getActiveInstance(): Promise<CtfInstance | null> {
     const response = await fetch(`${API_BASE_URL}/ctfs/instances`, {
       credentials: 'include',
@@ -41,9 +33,6 @@ export const ctfService = {
     return data.instance;
   },
 
-  // =========================
-  // Start a CTF instance
-  // =========================
   async startInstance(ctfId: string): Promise<CtfInstance> {
     const response = await fetch(`${API_BASE_URL}/ctfs/${ctfId}/instances`, {
       method: 'POST',
@@ -60,9 +49,6 @@ export const ctfService = {
     return response.json();
   },
 
-  // =========================
-  // Stop a running instance
-  // =========================
   async stopInstance(instanceId: string): Promise<void> {
     const response = await fetch(
       `${API_BASE_URL}/ctfs/instances/${instanceId}`,
@@ -80,9 +66,6 @@ export const ctfService = {
     }
   },
 
-  // =========================
-  // Submit flag
-  // =========================
   async submitFlag(
     ctfId: string,
     flag: string,

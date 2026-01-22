@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useToast } from '../common/ToastContainer';
 import './Navbar.css';
+import { useToast } from '../../hooks/useToast';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
