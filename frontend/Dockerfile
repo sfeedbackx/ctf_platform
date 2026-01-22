@@ -26,7 +26,6 @@ COPY . .
 RUN npm run build
 COPY ./src/assets/*  dist/assets
 
-
 # ============================================
 # Production Stage
 # ============================================
