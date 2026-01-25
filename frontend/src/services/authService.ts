@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from 'axios';
-import { API_BASE_URL, ROUTES, LOCAL_STORAGE_KEYS } from '../utils/constants';
+import { API_BASE_URL, LOCAL_STORAGE_KEYS, ROUTES } from '../utils/constants';
 
 export interface RegisterData {
   email: string;
