@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Navbar.css';
 import { useToast } from '../../hooks/useToast';
+import { ROUTES } from '../../utils/constants';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -12,13 +13,13 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     logout();
     showToast('Logged out successfully', 'success');
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
+        <Link to={ROUTES.HOME} className="navbar-logo">
           Ctf Platform
         </Link>
 
@@ -26,7 +27,7 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <li>
-                <NavLink to="/challenges">Challenges</NavLink>
+                <NavLink to={ROUTES.CHALLENGES}>Challenges</NavLink>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout">
@@ -37,12 +38,12 @@ const Navbar: React.FC = () => {
           ) : (
             <>
               <li>
-                <Link to="/login" className="btn-login">
+                <Link to={ROUTES.LOGIN} className="btn-login">
                   Login
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="btn-register">
+                <Link to={ROUTES.REGISTER} className="btn-register">
                   Register
                 </Link>
               </li>

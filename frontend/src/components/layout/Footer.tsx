@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../utils/constants';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -13,10 +15,10 @@ const Footer: React.FC = () => {
           <h4>Quick Links</h4>
           <ul>
             <li>
-              <a href="/challenges">Challenges</a>
+              <Link to={ROUTES.CHALLENGES}>Challenges</Link>
             </li>
             <li>
-              <a href="/leaderboard">Leaderboard</a>
+              <Link to={ROUTES.LEADERBOARD}>Leaderboard</Link>
             </li>
             <li>
               <a href="/about">About</a>

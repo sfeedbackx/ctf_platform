@@ -1,17 +1,18 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ROUTES } from '../../utils/constants';
 import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const categories = [
-    { name: 'All', path: '/challenges' },
-    { name: 'Web', path: '/challenges?category=web' },
-    { name: 'Crypto', path: '/challenges?category=crypto' },
-    { name: 'Reverse', path: '/challenges?category=reverse' },
-    { name: 'Forensics', path: '/challenges?category=forensics' },
-    { name: 'Pwn', icon: '', path: '/challenges?category=pwn' },
+    { name: 'All', path: ROUTES.CHALLENGES },
+    { name: 'Web', path: `${ROUTES.CHALLENGES}?category=web` },
+    { name: 'Crypto', path: `${ROUTES.CHALLENGES}?category=crypto` },
+    { name: 'Reverse', path: `${ROUTES.CHALLENGES}?category=reverse` },
+    { name: 'Forensics', path: `${ROUTES.CHALLENGES}?category=forensics` },
+    { name: 'Pwn', icon: '', path: `${ROUTES.CHALLENGES}?category=pwn` },
   ];
 
   return (
@@ -41,13 +42,13 @@ const Sidebar: React.FC = () => {
         <h3>Difficulty</h3>
         <ul className="sidebar-list">
           <li>
-            <Link to="/challenges?difficulty=easy">🟢 Easy</Link>
+            <Link to={`${ROUTES.CHALLENGES}?difficulty=easy`}>🟢 Easy</Link>
           </li>
           <li>
-            <Link to="/challenges?difficulty=medium">🟡 Medium</Link>
+            <Link to={`${ROUTES.CHALLENGES}?difficulty=medium`}>🟡 Medium</Link>
           </li>
           <li>
-            <Link to="/challenges?difficulty=hard">🔴 Hard</Link>
+            <Link to={`${ROUTES.CHALLENGES}?difficulty=hard`}>🔴 Hard</Link>
           </li>
         </ul>
       </div>

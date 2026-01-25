@@ -1,5 +1,4 @@
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 export const ROUTES = {
   HOME: '/',
@@ -12,3 +11,10 @@ export const ROUTES = {
   ADMIN: '/admin',
   LOGOUT: '/logout',
 };
+
+export const LOCAL_STORAGE_KEYS = {
+  TOKEN: 'token',
+  USER: 'user',
+} as const;
+
+export const AUTH_PREFIX = 'Bearer ';

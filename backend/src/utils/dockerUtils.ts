@@ -14,16 +14,19 @@ import path from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const dockerConfig: Dockerode.DockerOptions =
+  configEnv.nodeEnv === 'production'
+    ? {
+        host: 'EC2:IP_Address', //fron env it should not be hardcoded
+        protocol: 'https',
+        port: 2376,
+        ca: fs.readFileSync(path.join(__dirname, 'ca.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
+        key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+      }
+    : {};
 
-// for ec2 connection
-const docker = new Dockerode({
-  host: 'EC2:IP_Address', //fron env it should not be hardcoded
-  protocol: 'https',
-  port: 2376,
-  ca: fs.readFileSync(path.join(__dirname, 'ca.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
-  key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-});
+const docker = new Dockerode(dockerConfig);
 /**
  * Generates a random port number in the range [3001, 4000) that is not in use or reserved.
  *

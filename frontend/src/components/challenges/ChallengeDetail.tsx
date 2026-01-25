@@ -85,7 +85,8 @@ const ChallengeDetail: React.FC = () => {
         setMessage({ type: 'error', text: 'Incorrect flag. Try again!' });
       }
     } catch (error: unknown) {
-      getErrorMessage(error);
+      const errorMessage = getErrorMessage(error);
+      setMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
     }

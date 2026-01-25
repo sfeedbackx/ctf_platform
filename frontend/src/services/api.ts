@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/constants';
+import {
+  API_BASE_URL,
+  ROUTES,
+  LOCAL_STORAGE_KEYS,
+  AUTH_PREFIX,
+} from '../utils/constants';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,10 +14,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
     if (token) {
       config.headers = config.headers ?? {};
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${AUTH_PREFIX}${token}`;
     }
     return config;
   },
@@ -25,15 +30,15 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     // Only redirect if token exists AND backend explicitly rejects it
-    if (status === 401 && localStorage.getItem('token')) {
+    if (status === 401 && localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN)) {
       console.warn('Unauthorized – token invalid or expired');
 
       // Clear auth ONCE
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
 
       // Hard redirect to reset state
-      window.location.replace('/login');
+      window.location.replace(ROUTES.LOGIN);
     }
 
     return Promise.reject(error);

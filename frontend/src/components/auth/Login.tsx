@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { getErrorMessage } from '../../utils/errorHandler';
@@ -16,7 +16,11 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (isAuthenticated) navigate(ROUTES.CHALLENGES);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(ROUTES.CHALLENGES);
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

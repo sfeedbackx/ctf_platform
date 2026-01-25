@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from 'axios';
-import { API_BASE_URL, ROUTES } from '../utils/constants';
+import { API_BASE_URL, LOCAL_STORAGE_KEYS, ROUTES } from '../utils/constants';
 
 export interface RegisterData {
   email: string;
@@ -47,23 +47,23 @@ export const authService = {
 
     const user = response.data.userWithoutPassword;
 
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
 
     return user;
   },
 
   async logout(): Promise<void> {
-    await api.post('/logout');
-    localStorage.removeItem('user');
+    await api.post(ROUTES.LOGOUT);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
   },
 
   getCurrentUser(): User | null {
-    const raw = localStorage.getItem('user');
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
     return raw ? JSON.parse(raw) : null;
   },
 
   updateUser(user: User): void {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
   },
 };
 

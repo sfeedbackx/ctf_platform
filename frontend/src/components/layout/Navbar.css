@@ -65,7 +65,6 @@
 
 .btn-login,
 .btn-register {
-  background: white;
   color: var(--primary);
   border-color: white;
 }
