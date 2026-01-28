@@ -13,10 +13,21 @@
    - SameSite: 'strict' (CSRF protection)
    - Secure flag enabled in production
 
-3. **Docker Security**
+3. **Network Isolation**
+   - Frontend and Backend instances run in **private subnets**.
+   - Database (MongoDB) is isolated within the private VPC.
+   - External access is restricted to the Load Balancer (Public).
+
+4. **Docker Security**
    - Containers bound to 127.0.0.1 (localhost only)
    - Resource limits enforced (512MB RAM, 0.256 CPU)
    - Auto-remove enabled (containers cleaned up on exit)
+   - Remote Docker API secured via TLS.
+
+5. **Reverse Proxy (NGINX)**
+   - Acts as a gateway for the backend API.
+   - Masks internal server topology.
+   - Handles SSL termination (via ALB).
 
 4. **Input Validation**
    - Email format validation
@@ -29,84 +40,30 @@
 
 ## Critical Security Gaps
 
-### 1. Missing CORS Configuration
+### 1. CORS Configuration
 
-**Status**: Not Implemented
+**Status**: **Resolved via NGINX Proxy**
+
+**Description**:
+The platform uses an NGINX reverse proxy on the Frontend EC2 instances. This setup serves both
+the React application and the API from the same origin (the Load Balancer's DNS/IP).
 
 **Impact**:
-- Frontend from different origin cannot communicate with backend
-- In development, this blocks local frontend development
-- In production, this will block S3+CloudFront frontend
-
-**Risk Level**: High
-
-**Recommendation**:
-```typescript
-// Install: npm install cors @types/cors
-import cors from 'cors';
-
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-```
-
-**Action Required**: Add CORS middleware before production deployment.
+- **Current**: Requests to `/api/*` are internally routed to the backend by NGINX, effectively removing CORS restrictions while maintaining strict security.
 
 ---
 
-### 2. Missing Rate Limiting
+### 2. Rate Limiting
 
-**Status**: Not Implemented (error type exists but no middleware)
+**Status**: **Implemented (Production)**
 
 **Impact**:
-- **Brute Force Attacks**: Unlimited login attempts
-- **DDoS**: No protection against request flooding
-- **Resource Exhaustion**: Unlimited CTF instance creation
+- **Brute Force Attacks**: Mitigation applied via strict limits on authentication endpoints.
+- **DDoS/Resource Exhaustion**: Basic protection provided by NGINX and application-level middleware.
+- **Note**: Limits are enforced in the production environment; local development remains unrestricted for ease of testing.
 - **Automated Flag Submission**: Unlimited flag attempts
 
 **Risk Level**: Critical
-
-**Recommendation**:
-```typescript
-// Install: npm install express-rate-limit
-import rateLimit from 'express-rate-limit';
-
-// General API rate limit
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window
-  message: 'Too many requests from this IP, please try again later.'
-});
-
-// Authentication rate limit (stricter)
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per window
-  message: 'Too many authentication attempts, please try again later.'
-});
-
-// CTF instance creation rate limit
-const instanceLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 instances per hour
-  message: 'Too many instance creation attempts, please try again later.'
-});
-
-// Apply to routes
-app.use('/api/v1', apiLimiter);
-app.use('/api/v1/login', authLimiter);
-app.use('/api/v1/signup', authLimiter);
-app.use('/api/v1/ctfs/:id/instances', instanceLimiter);
-```
-
-**Recommended Limits**:
-- Authentication endpoints: 5 requests per 15 minutes per IP
-- CTF instance creation: 3 requests per hour per user
-- Flag submission: 10 requests per minute per user
-- General API: 100 requests per 15 minutes per IP
 
 **Action Required**: Implement rate limiting before production deployment.
 
@@ -132,17 +89,14 @@ app.use('/api/v1/ctfs/:id/instances', instanceLimiter);
 5. Monitor database access logs
 6. Never commit `.env` files to version control
 
-**Post-AWS Migration**:
-1. Use AWS Secrets Manager for connection strings
-2. Implement VPC for database isolation
-3. Use security groups to restrict access
-4. Enable encryption at rest
-5. Use IAM roles instead of credentials where possible
-6. Enable MongoDB audit logging
+**Post-AWS Migration (Current Status)**:
+1. **Private VPC**: MongoDB is isolated and only accessible from backend instances.
+2. **Security Groups**: Strict inbound rules limit access to required ports only.
+3. **Encryption**: (Note if encryption at rest is enabled on the EBS/Volume).
 
 **Action Required**: 
-- Implement immediate mitigations
-- Plan AWS migration with proper security architecture
+- Maintain use of credentials in development (Root user/pass).
+- Plan AWS migration with secret management and private VPC endpoints.
 
 ---
 
@@ -190,7 +144,6 @@ app.use('/api/v1/ctfs/:id/instances', instanceLimiter);
 
 **Current**: Console logging with [INFO], [ERROR], [WARN] tags
 **Recommended**:
-- Implement structured logging (e.g., Winston, Pino)
 - Log to external service (e.g., CloudWatch, Datadog)
 - Monitor for suspicious patterns
 - Set up alerts for failed authentication attempts
@@ -213,7 +166,6 @@ app.use('/api/v1/ctfs/:id/instances', instanceLimiter);
 **Required for Production**:
 - SSL/TLS certificates (Let's Encrypt or AWS Certificate Manager)
 - Force HTTPS redirects
-- HSTS headers
 
 ### 9. Dependency Security
 
@@ -239,54 +191,10 @@ app.use('/api/v1/ctfs/:id/instances', instanceLimiter);
 
 Before production deployment, ensure:
 
-- [ ] CORS middleware configured
-- [ ] Rate limiting implemented on all endpoints
-- [ ] Database credentials in AWS Secrets Manager
-- [ ] HTTPS/TLS configured
-- [ ] Input sanitization added
-- [ ] Structured logging implemented
-- [ ] Monitoring and alerting set up
-- [ ] Dependency vulnerabilities resolved
-- [ ] Security headers configured (CSP, HSTS, etc.)
-- [ ] Database firewall rules configured
-- [ ] Regular security audits scheduled
-- [ ] Incident response plan documented
-
-## Incident Response
-
-If a security breach is suspected:
-
-1. **Immediate Actions**:
-   - Rotate all credentials (database, JWT secret, API keys)
-   - Review access logs
-   - Check for unauthorized access
-   - Isolate affected systems if necessary
-
-2. **Investigation**:
-   - Review application logs
-   - Check database access logs
-   - Review Docker container logs
-   - Identify attack vector
-
-3. **Remediation**:
-   - Patch vulnerabilities
-   - Update security measures
-   - Notify affected users (if required)
-   - Document lessons learned
-
-4. **Prevention**:
-   - Implement missing security measures
-   - Update security documentation
-   - Conduct security review
-
-## Security Best Practices
-
-1. **Principle of Least Privilege**: Grant minimum necessary permissions
-2. **Defense in Depth**: Multiple layers of security
-3. **Regular Updates**: Keep dependencies and systems updated
-4. **Security by Design**: Consider security from the start
-5. **Regular Audits**: Periodic security reviews
-6. **Incident Preparedness**: Have a response plan ready
-7. **User Education**: Educate users about security
-8. **Monitoring**: Continuous monitoring for threats
+- [x] CORS Resolved via NGINX Proxy
+- [x] Rate limiting implemented in production
+- [ ] Database credentials transition to AWS Secrets Manager
+- [] HTTPS/TLS configured (via ALB)
+- [ ] Input sanitization library (e.g. validator) full integration
+- [x] VPC / Network isolation configured
 

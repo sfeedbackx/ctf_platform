@@ -12,36 +12,38 @@ solving CTF problems.
 ### High-Level Architecture
 
 ```
-┌─────────────────┐         ┌──────────────────┐          ┌──────────────┐
-│  Frontend       │────────>│   Backend API    │────────> │  EC2 Docker  │
-│  CloudFront+S3  │  HTTP   │   (EC2 Instances)│  Remote  │    Daemon    │
-│                 │  calls  │   + Load Balancer│  TLS     │  (CTF        │
-│                 │         │   + NGINX        │          │   Instances) │
-└─────────────────┘         └──────────────────┘          └──────────────┘
-                                      │
-                                      │
-                            ┌─────────┴─────────┐
-                            │                   │
-                    ┌───────▼──────┐   ┌───────▼──────┐
-                    │  EC2 MongoDB │   │  CloudWatch  │
-                    │   Database   │   │  + Auto Scale│
-                    └──────────────┘   │  + SNS + IAM │
-                                       └──────────────┘
+┌──────────────────┐         ┌──────────────────┐          ┌──────────────┐
+│  Load Balancer   │────────>│   Frontend       │────────> │  EC2 Docker  │
+│  (Public ALB)    │  HTTP   │   (EC2 + NGINX)  │  Remote  │    Daemon    │
+└─────────┬────────┘         │ (Private Subnet) │  TLS     │  (CTF        │
+          │                  └─────────┬────────┘          │   Instances) │
+          │                            │                   └──────────────┘
+          │                            │ (Reverse Proxy)
+          │                            ▼
+          │                  ┌──────────────────┐
+          │                  │   Backend API    │
+          └─────────────────>│  (Upstream EC2s) │
+                             └─────────┬────────┘
+                                       │
+                                 ┌─────▼─────┐
+                                 │EC2 MongoDB│
+                                 └───────────┘
 ```
 
 ### Component Breakdown
 
 #### Frontend
 - **Purpose**: User interface for interacting with CTF challenges
-- **Technology**: React
-- **Deployment**: Will be hosted on AWS S3 + CloudFront (CDN) in production
-- **Communication**: Communicates with backend via REST API
+- **Technology**: React + NGINX
+- **Deployment**: Private EC2 instances behind an Application Load Balancer (ALB).
+- **Communication**: Served via NGINX, which also acts as a reverse proxy for the backend API.
+- **Restriction Note**: This setup was chosen because CloudFront/S3 access was restricted.
 
 #### Backend
 - **Purpose**: API server handling authentication, CTF management, and Docker orchestration
 - **Technology**: Node.js + Express.js + TypeScript
-- **Deployment**: Multiple EC2 instances (Backend1, Backend2) behind Load Balancer
-- **Network**: Runs in private subnet for security
+- **Deployment**: Multiple EC2 instances configured as upstreams for the Frontend NGINX.
+- **Network**: Private subnet, accessible only via the Frontend proxy.
 - **Responsibilities**:
   - User authentication and authorization
   - CTF challenge management
@@ -57,7 +59,7 @@ solving CTF problems.
   - `users`: User accounts and solved CTF tracking
   - `ctfs`: CTF challenge definitions and configurations
   - `ctfinstances`: Active/running CTF instance records
-
+    ![./ctfModels.png](db models)
 #### Docker
 - **Purpose**: Containerization and isolation of CTF challenges
 - **Technology**: Docker (via Dockerode library)
@@ -181,43 +183,20 @@ be implemented before production deployment:
    - **Impact**: Frontend from different origin cannot communicate with backend
    - **Recommendation**: Implement CORS middleware with proper origin whitelist
 
-2. **Rate Limiting**
-   - **Status**: Not implemented (error type exists but no middleware)
-   - **Impact**: Vulnerable to brute force attacks, DDoS, and resource exhaustion
-   - **Recommendation**: Implement rate limiting middleware (e.g., express-rate-limit)
-   - **Areas to protect**:
-     - Login endpoint (prevent brute force)
-     - Signup endpoint (prevent spam)
-     - CTF instance creation (prevent resource exhaustion)
-     - Flag submission (prevent automated solving)
-
-3. **Database Exposure**
-   - **Status**: Database connection string exposed in environment variables
-   - **Impact**: If environment variables are leaked, database is directly accessible
-   - **Recommendation**: 
-     - Use AWS Secrets Manager or Parameter Store
-     - Implement database firewall rules
-     - Use VPC for database isolation
-     - Enable MongoDB authentication and encryption at rest
-   - **Note**: This will be addressed when migrating to AWS infrastructure
-
 ## AWS Production Architecture
 
 ### Production Setup
 ```
 ┌─────────────────┐         ┌─────────────────────────────────────────────┐
-│  CloudFront     │         │         Application Layer                   │
-│  + S3           │────────>│  ┌──────────────────────────────────────┐   │
-│  (Frontend)     │  HTTP   │  │  Load Balancer                       │   │
-│                 │  calls  │  └───────────────┬──────────────────────┘   │
-└─────────────────┘         │                  │                          │
+│  Load Balancer  │         │         Application Layer (Private VPC)     │
+│  (Public ALB)   │────────>│  ┌──────────────────────────────────────┐   │
+│                 │  HTTP   │  │  Frontend EC2 (NGINX Proxy)          │   │
+└─────────────────┘         │  └───────────────┬──────────────────────┘   │
+                            │                  │                          │
                             │        ┌─────────▼─────────┐                │
-┌─────────────────┐         │        │  Private Network  │                │
-│  S3             │         │        │  ┌──────────────┐ │                │
-│  (Static        │         │        │  │  Backend1    │ │                │
-│   Resources)    │         │        │  │  Backend2    │ │                │
-└─────────────────┘         │        │  └──────┬───────┘ │                │
-                            │        └─────────┼─────────┘                │
+                            │        │  Backend Cluster  │                │
+                            │        │  (Upstream EC2s)  │                │
+                            │        └─────────┬─────────┘                │
                             │                  │ (Docker API TLS)         │
                             │        ┌─────────▼─────────┐                │
                             │        │  EC2 Docker       │◄─── PUBLIC     │
@@ -230,6 +209,7 @@ be implemented before production deployment:
                             │        │  EC2 MongoDB      │                │
                             │        └───────────────────┘                │
                             └─────────────────────────────────────────────┘
+```
                                       │
                             ┌─────────┴─────────────────────────┐
                             │                                   │
@@ -329,13 +309,16 @@ be implemented before production deployment:
 - **Network Isolation**: Backend instances can only be accessed via Load Balancer
 - **IAM**: Controls access to AWS services and resources
 
+### Deployment Infrastructure
+- **Frontend**: React application, proxied to backend in development.
+- **Backend**: Node.js/Express, orchestrates Docker containers.
+- **Database**: MongoDB (Root credentials enabled in development).
+
 ### Current Development Setup
-- Backend runs locally on configured port (default: 3000)
-- MongoDB connection via connection string
-- Docker daemon accessible via:
-  - Default socket (local development)
-  - Docker socket proxy (docker-compose)
-  - Directly to the docker daemon
+- **Backend API**: Runs locally on `http://localhost:3000`.
+- **Frontend App**: Runs locally on `http://localhost:5173`.
+- **In-Memory Port Tracking**: Used for allocating challenge ports (3001-4000).
+- **Docker Integration**: Local Docker socket or proxy.
 
 ## Container Lifecycle
 

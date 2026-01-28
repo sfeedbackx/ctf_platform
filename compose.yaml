@@ -5,8 +5,9 @@ services:
     image: mongo:8.0
     container_name: mongodb
     restart: always
-    ports:
-      - "27017:27017"
+    # Uncomment this to connect to the db (exposed to the host)
+    #ports:
+    #  - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -24,8 +25,8 @@ services:
   docker-socket-proxy:
       container_name: dockerproxy
       # Uncomment the following ports section for development
-      ports:
-         - "2375:2375"
+      #  ports:
+     #    - "2375:2375"
       environment:
       - CONTAINERS=1      # create/start/stop/inspect containers
       - POST=1            # CRITICAL: allow POST requests
@@ -50,17 +51,18 @@ services:
       - ctf-network
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: dockerfile
       target: production
     container_name: ctf-backend
     restart: unless-stopped
+  # you  don't really need to Uncomment this because you will use npm run dev
  #   ports:
   #    - "${PORT:-3000}:3000"
     volumes:
-      - ./src/utils/ca.pem:/app/dist/utils/key.pem:ro
+      - ./backend/src/utils/ca.pem:/app/dist/utils/key.pem:ro
     env_file:
-      - .env
+      - ./backend/.env
     networks:
       - ctf-network
     depends_on:
@@ -68,6 +70,24 @@ services:
         condition: service_started
       mongo:
         condition: service_healthy
+  app-frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+      target: production
+    container_name: ctf-frontend
+    restart: unless-stopped
+    # this need to access to frontend
+    ports:
+      - "8080:80"
+    # to be honest we don't really have env for frontend
+    #env_file:
+      #-  ..frontend/
+    networks:
+      - ctf-network
+    depends_on:
+      - app
+
 networks:
   ctf-network:
     driver: bridge

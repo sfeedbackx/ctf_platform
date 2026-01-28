@@ -2,8 +2,8 @@
 
 ## Base URL
 
-- **Development**: `http://localhost:3000`
-- **Production**: (To be configured)
+- **Development**: `http://localhost:8080` (NGINX Proxy) or `http://localhost:3000` (Direct)
+- **Production**: `http://<load-balancer-dns>`
 
 ## Authentication
 
@@ -388,23 +388,15 @@ For internal server errors (500), the message is always:
 
 ## Rate Limiting
 
-**Note**: Rate limiting is currently NOT implemented. This is a security concern that should be addressed before production deployment.
+**Status**: **Implemented** in production.
 
-Recommended rate limits:
-- Authentication endpoints: 5 requests per 15 minutes per IP
-- CTF instance creation: 3 requests per hour per user
-- Flag submission: 10 requests per minute per user
-- General API: 100 requests per minute per IP
+Rate limits are enforced at the NGINX and application level.Authentication endpoints are
+restricted to 5 requests per 15 minutes per IP. CTF instance creation is limited to 3 per hour.
 
 ## CORS
 
-**Note**: CORS (Cross-Origin Resource Sharing) is currently NOT configured. The frontend must be served from the same origin as the backend, or CORS middleware must be added.
+**Status**: **Resolved** via single-origin NGINX proxy.
 
-Recommended CORS configuration:
-```javascript
-{
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
-}
-```
+The production configuration uses NGINX to serve both the frontend assets and the backend API
+from the same domain, eliminating the need for complex CORS headers while enhancing security.
 
