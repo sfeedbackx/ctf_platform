@@ -52,4 +52,4 @@ For detailed instructions, see the **[Setup Guide](docs/setup.md)**.
 - **[Security Overview](docs/security.md)**
 
 ## Contributing
-Please refer to our documentation before submitting pull requests. Ensure all code remains linter-compliant and includes necessary tests.
+Please refer to our documentation before submitting pull requests. Ensure all code remains linter-compliant.
