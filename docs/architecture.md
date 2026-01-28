@@ -59,7 +59,7 @@ solving CTF problems.
   - `users`: User accounts and solved CTF tracking
   - `ctfs`: CTF challenge definitions and configurations
   - `ctfinstances`: Active/running CTF instance records
-    ![./ctfModels.png](db models)
+  ![db models](./ctfModels.png)
 #### Docker
 - **Purpose**: Containerization and isolation of CTF challenges
 - **Technology**: Docker (via Dockerode library)
