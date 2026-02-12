@@ -1,0 +1,27 @@
+FROM python:3.12-slim AS builder
+WORKDIR /app
+COPY hash.py .
+RUN python hash.py | tee text.txt;
+
+FROM alpine:latest as production
+RUN apk update && apk upgrade;
+RUN apk add openssl nmap-ncat;
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup;
+WORKDIR /app
+
+# 2. Copy the result from builder AND your shell script
+COPY --from=builder /app/text.txt .
+COPY script.sh .
+
+# 3. FIX PERMISSIONS: 
+RUN chmod +x script.sh && \
+    chown appuser:appgroup text.txt script.sh
+
+# 4. Switch to the non-root user
+USER appuser
+EXPOSE 5000
+
+ENV FLAG ""
+# 5. Execute the script
+CMD ["ncat", "-lkp", "5000", "-e", "/bin/sh ./script.sh"]
